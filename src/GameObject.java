@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class GameObject extends GameObjectBase {
+public class GameObject extends GameObjectBase{
 	private ArrayList<GameObjectBase> elements;
 	
 	private GameObject(String key, ArrayList<GameObjectBase> elements) {
@@ -12,19 +12,36 @@ public class GameObject extends GameObjectBase {
 		this.elements = new ArrayList<GameObjectBase>(Arrays.asList(elements));
 	}
 	
-	public GameObjectBase element(String key) {
+	@SuppressWarnings("unchecked")
+	public <E extends GameObjectBase> E element(String key) {
 		for(GameObjectBase gob : elements)
 			if(gob.key().equals(key))
-				return gob;
+				return (E)gob;
 		throw new InputMismatchException("GameObject " + key() + " has no element " + key);
 	}
-	public GameObject create(Parser p) {	//TODO
-		ArrayList<GameObjectBase> temp = new ArrayList<GameObjectBase>(elements);
+	public GameObject create(Parser p) {
+		Parser p2 = new Parser(p.nextBlock(), 0);
 		
-		p.requireParentheses();
+		Map<String, GameObjectBase> temp = new HashMap<String, GameObjectBase>();
+		for(GameObjectBase gob : elements)
+			temp.put(gob.key(), gob);
 		
+		while(p2.hasNext()) {
+			String key = p2.next();
+			if(key.isEmpty())	//TODO why
+				break;
+			//System.out.println(key);
+			temp.put(key, temp.get(key).create(p2));
+			//System.out.println(temp.get(key));
+		}
 		
-		
-		return new GameObject(key, temp);
+		return new GameObject(key, new ArrayList<GameObjectBase>(temp.values()));
+	}
+	@Override
+	public String toString() {
+		String s = key + "{";
+		for(GameObjectBase gob : elements)
+			s += gob.toString() + " ";
+		return s + "}";
 	}
 }

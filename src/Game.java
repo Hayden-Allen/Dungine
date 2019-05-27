@@ -1,22 +1,20 @@
 import java.util.*;
 
 public class Game {
+	private Player p;
 	private ArrayList<World> worlds;
-	private Set<String> imports, reads;
 	private Map<String, GameObjectBase> definitions;
 	
 	public Game() {
 		worlds = new ArrayList<World>();
-		imports = new HashSet<String>();
-		reads = new HashSet<String>();
 		definitions = new HashMap<String, GameObjectBase>();
 	}
 	
-	public Set<String> imports(){
-		return imports;
+	public void setPlayer(Player p) {
+		this.p = p;
 	}
-	public Set<String> reads(){
-		return reads;
+	public void addWorld(World w) {
+		worlds.add(w);
 	}
 	public void addDefinition(Parser p) {
 		String type = p.next();

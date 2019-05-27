@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class World {
+public class World implements Createable {
 	private ArrayList<ArrayList<Room>> rooms;
 	private String id;
 	
@@ -10,6 +10,16 @@ public class World {
 		for(Room[] r : rooms)
 			this.rooms.add(new ArrayList<Room>(Arrays.asList(r)));
 		this.id = id;
+	}
+	public World(GameObject go) {
+		fromGameObject(go);
+	}
+	
+	public void fromGameObject(GameObject go) {	//TODO
+		id = go.<GameObjectAttribute<String>>element("id").value();
+	}
+	public String string() {
+		return String.format("world{id %s}", id);
 	}
 	
 	private boolean doorAt(int x, int y, int d) {

@@ -7,6 +7,9 @@ public class GameObjectAttribute<E> extends GameObjectBase {
 		this.value = value;
 	}
 	
+	public E value(){
+		return value;
+	}
 	@SuppressWarnings("unchecked")
 	public GameObjectAttribute<E> create(Parser p) {
 		E value = (E)p.<E>nextE(this.value);
@@ -15,6 +18,6 @@ public class GameObjectAttribute<E> extends GameObjectBase {
 	}
 	@Override
 	public String toString() {
-		return key + ": " + (value instanceof String ? '\"' : "" ) + value + (value instanceof String ? '\"' : "" );
+		return key + " " + (value instanceof String ? '\"' : "" ) + value + (value instanceof String ? '\"' : "" );
 	}
 }

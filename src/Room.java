@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Room {
+public class Room implements Createable {
 	public static final int UP = 0b0001, LEFT = 0b0010, DOWN = 0b0100, RIGHT = 0b1000, ALL = 0b1111;
 	private int doors;
 	private boolean hidden;
@@ -13,6 +13,14 @@ public class Room {
 		if(objects == null)
 			objects = new RoomObject[0];
 		this.objects = new ArrayList<RoomObject>(Arrays.asList(objects));
+	}
+	
+	public void fromGameObject(GameObject go) {	//TODO lists
+		doors = go.<GameObjectAttribute<Integer>>element("doors").value();
+		hidden = go.<GameObjectAttribute<Boolean>>element("hidden").value();
+	}
+	public String string() {
+		return String.format("room{doors %d hidden %b}", doors, hidden);
 	}
 	
 	public boolean door(int d) {

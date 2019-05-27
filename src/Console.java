@@ -17,10 +17,11 @@ public class Console {
 	public static<E> E[] arr(E...es) {
 		return es;
 	}
-	public static GameObjectBase template(String id) {
+	@SuppressWarnings("unchecked")
+	public static<E extends GameObjectBase> E template(String id) {
 		for(GameObjectBase gob : templates)
 			if(gob.key().equals(id))
-				return gob;
+				return (E)	gob;
 		return null;
 	}
 	public static void init() {
@@ -53,7 +54,17 @@ public class Console {
 		parameters.put("Text.Speed", 25);
 		
 		templates.add(Console.<Integer>goa("hp", 10));
+		templates.add(Console.<Integer>goa("atk", 10));
+		templates.add(Console.<Integer>goa("def", 10));
+		templates.add(Console.<Integer>goa("spd", 10));
+		templates.add(Console.<Integer>goa("gold", 100));
 		templates.add(Console.<String>goa("name", "test"));
+		
+		templates.add(Console.go("gchest", template("gold")));
+		
+		templates.add(Console.go("stats", template("name"), template("atk"), template("def"), template("spd")));
+		templates.add(Console.go("player", template("stats"), template("hp"), template("gold")));
+		
 		
 		keywords.put("Type.String", "string");
 		keywords.put("Type.Integer", "int");
@@ -63,6 +74,9 @@ public class Console {
 	}
 	private static<E> GameObjectAttribute<E> goa(String key, E value) {
 		return new GameObjectAttribute<E>(key, value);
+	}
+	private static GameObject go(String key, GameObjectBase...elements) {
+		return new GameObject(key, elements);
 	}
 	public static void putf(String s, Object...args) {
 		int arg = 0;
@@ -96,7 +110,13 @@ public class Console {
 		//System.out.println(Parser.readDef("helloworld.txt"));
 		
 		Game g = new Game();
-		Parser.createGame(g);
+		//Parser.createGame(g);
+		Parser p = new Parser("main.txt");
+		//System.out.println(p.nextBlock());
+		
+		Character c = new Player(p);
+		System.out.println(c.string());
+		System.out.println(Console.template("player"));
 		
 		w1.print();
 	}

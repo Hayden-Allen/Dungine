@@ -5,7 +5,6 @@ public class Parser {
 	public static final String DELIMETERS = ": \t\n{}[]()" + EOF;
 	private String file;
 	private int index = 0;
-	private Stack<java.lang.Character> parentheses;
 	
 	public Parser(String path) {//TODO: change the way file is stored to allow for errors w/ line numbers
 		try {
@@ -17,7 +16,10 @@ public class Parser {
 			s.close();
 		}
 		catch(IOException e) {e.printStackTrace();}
-		parentheses = new Stack<java.lang.Character>();
+	}
+	public Parser(String s, int start) {	//TODO: start unnecessary but conflicting headers
+		file = s + EOF;
+		index = start;
 	}
 	
 	private boolean isDelim(char c) {
@@ -28,19 +30,37 @@ public class Parser {
 			return file.charAt(index++);
 		return EOF;
 	}
+	public char nextNonDelim() {
+		char c = nextChar();
+		while(isDelim(c))
+			c = nextChar();
+		return c;
+	}
+	public char nextParentheses() {
+		char c = nextChar();
+		while(!("()[]{}".contains(""+c)))
+			c = nextChar();
+		return c;
+	}
 	public boolean hasNext() {
 		return index < file.length();
 	}
 	public String next() {
-		String s = "";
-		char c;
-		while((c = nextChar()) != EOF && !isDelim(c))
-			s += c;
-		return s;
+		if(hasNext()) {
+			String s = "";
+			char c;
+			while((c = nextChar()) != EOF && !isDelim(c))
+				s += c;
+			if(s.isEmpty())
+				return next();
+			index--;
+			return s;
+		}
+		return "";
 	}
 	public String nextString() {
 		String s = "";
-		char c = nextChar();
+		char c = nextNonDelim();
 		if(c != '\"')
 			throw new InputMismatchException("String literal must begin with \"");
 		while((c = nextChar()) != EOF && c != '\"')
@@ -63,21 +83,33 @@ public class Parser {
 			return ')';
 		return '\0';
 	}
-	public void requireParentheses() {
-		char c = nextChar();
-		if(!(isOpen(c) || isClose(c)))
-			throw new InputMismatchException("Parentheses required");
-		if(isOpen(c))
-			parentheses.push(c);
-		else if(parentheses.pop() != compliment(c))
-			throw new InputMismatchException("Incorrect parentheses");
+	public String nextBlock() {	//TODO assumes at start of block
+		String s = "";
+		Stack<java.lang.Character> parentheses = new Stack<java.lang.Character>();
+		
+		parentheses.push(nextParentheses());
+		while(!parentheses.isEmpty()) {
+			char c = nextChar();
+			s += c;
+			if(isOpen(c))
+				parentheses.push(c);
+			else if(isClose(c)) {
+				if(compliment(parentheses.pop()) != c) {
+					System.out.println(s);
+					throw new InputMismatchException("Invalid parentheses");
+				}
+			}
+		}
+		return s.substring(0, s.length() - 1);
 	}
 	
-	public <E> Object nextE(E e) {
+	public <E> Object nextE(E e) {	//TODO account for definitions
 		if(e instanceof Integer)
 			return Integer.parseInt(next());
 		if(e instanceof String)
 			return nextString();
+		if(e instanceof Boolean)
+			return Boolean.parseBoolean(next());
 		return null;
 	}
 	
@@ -92,27 +124,19 @@ public class Parser {
 			if(cmd.equals("import"))
 				readHeader(p.nextString() + Console.FILE_TYPE, g);
 			else if(cmd.equals("read"))
-				read(p.nextString() + Console.FILE_TYPE, g);
+				readFile(p.nextString() + Console.FILE_TYPE, g);
 		}
 	}
-	public static void read(String fp, Game g) {
-		
-	}
-	/*
-	public static ArrayList<GameObjectBase> readDef(String fp) {
-		ArrayList<GameObjectBase> gos = new ArrayList<GameObjectBase>();
+	public static void readFile(String fp, Game g) {
 		Parser p = new Parser(fp);
 		
 		while(p.hasNext()) {
-			String id = p.next();
-			if(id.isEmpty())	//TODO: why
-				break;
-			System.out.print(id + "-> ");
-			gos.add(Console.template(id).create(p));
-			System.out.println(gos.get(gos.size() - 1));
+			String key = p.next();
+			
+			if(key.equals("player"))
+				g.setPlayer(new Player(Console.<GameObject>template("player").create(p)));
+			if(key.equals("world"))
+				g.addWorld(new World(Console.<GameObject>template("world").create(p)));
 		}
-		
-		return gos;
 	}
-	*/
 }
