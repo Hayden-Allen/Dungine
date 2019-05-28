@@ -4,13 +4,19 @@ import java.io.*;
 public class Console {
 	public static ArrayList<GameObjectBase> templates;
 	public static Map<String, String> keywords;
+	public static Map<String, ArrayList<String>> commands;
 	public static Map<String, Object> parameters;
 	public static Map<String, java.lang.Character> symbols;
+	public static Map<ArrayList<String>, GameFunction> commandfns;
 	public static String BASE_FILEPATH, MAIN_FILEPATH, FILE_TYPE, TITLE_CARD;
 	
 	@SafeVarargs
 	public static<E> E[] arr(E...es) {
 		return es;
+	}
+	@SafeVarargs
+	public static<E> ArrayList<E> arrl(E...es){
+		return new ArrayList<E>(Arrays.asList(es));
 	}
 	private static GameObject go(String key, GameObjectBase...elements) {
 		return new GameObject(key, elements);
@@ -38,6 +44,8 @@ public class Console {
 		parameters = new HashMap<String, Object>();
 		templates = new ArrayList<GameObjectBase>();
 		keywords = new HashMap<String, String>();
+		commands = new HashMap<String, ArrayList<String>>();
+		commandfns = new HashMap<ArrayList<String>, GameFunction>();
 		
 		symbols.put("Wall.NS", '|');
 		symbols.put("Wall.EW", '-');
@@ -47,8 +55,8 @@ public class Console {
 		symbols.put("Wall.Door.Down", 'v');
 		symbols.put("Wall.Door.Left", '<');
 		symbols.put("Wall.Door.Right", '>');
-		symbols.put("Wall.Door.Closed.NS", ':');
-		symbols.put("Wall.Door.Closed.EW", '=');
+		symbols.put("Wall.Door.Closed.NS", '|');
+		symbols.put("Wall.Door.Closed.EW", '-');
 		symbols.put("Room.Empty", ' ');
 		symbols.put("Room.Hidden.1", '\\');
 		symbols.put("Room.Hidden.2", '/');
@@ -88,7 +96,45 @@ public class Console {
 		keywords.put("Type.Object", "obj");
 		keywords.put("Type.List", "list");
 		
-		putf("%41s\n%s\n\n", "M A D E   W I T H", TITLE_CARD);
+		
+		commands.put("Direction.Up", Console.<String>arrl("u", "up", "n", "north"));
+		commands.put("Direction.Left", Console.<String>arrl("l", "left", "w", "west"));
+		commands.put("Direction.Down", Console.<String>arrl("d", "down", "s", "south"));
+		commands.put("Direction.Right", Console.<String>arrl("r", "right", "e", "east"));
+		
+		//putf("%41s\n%s\n\n", "M A D E   W I T H", TITLE_CARD);
+		
+		
+		GameFunction go = (String s, Game g) -> {
+			Scanner in = new Scanner(s);
+			String dir = in.next();
+			int times = 1;
+			if(in.hasNextInt()) 
+				times = in.nextInt();
+			in.close();
+			
+			for(String str : commands.get("Direction.Up"))
+				if(str.equals(dir)) {
+					g.move(0, -times);
+					return;
+				}
+			for(String str : commands.get("Direction.Left"))
+				if(str.equals(dir)) {
+					g.move(-times, 0);
+					return;
+				}
+			for(String str : commands.get("Direction.Down"))
+				if(str.equals(dir)) {
+					g.move(0, times);
+					return;
+				}
+			for(String str : commands.get("Direction.Right"))
+				if(str.equals(dir)) {
+					g.move(times, 0);
+					return;
+				}
+		};
+		commandfns.put(arrl("go", "move"), go);
 	}
 	@SuppressWarnings("unchecked")
 	public static<E> E parameter(String id) {
@@ -123,6 +169,25 @@ public class Console {
 		Game g = new Game();
 		Parser.createGame(g);
 		
-		g.print();
+		Scanner in = new Scanner(System.in);
+		String input = "";
+		while(true) {
+			g.print();
+			putf("<< ");
+			input = in.nextLine();
+			if(input.equals("quit"))
+				break;
+//			while(!commandfns.containsKey(input.substring(0, input.indexOf(" ")))) {
+//				putf(">> Invalid command\n");
+//				input = in.nextLine();
+//			}
+//			int i = input.indexOf(" ");
+//			commandfns.get(input.substring(0, i)).op(input.substring(i + 1), g);
+			String key = input.substring(0, input.indexOf(" "));
+			for(ArrayList<String> arr : commandfns.keySet())
+				for(String s : arr)
+					if(s.equals(key))
+						commandfns.get(arr).op(input.substring(input.indexOf(" ") + 1), g);
+		}
 	}
 }

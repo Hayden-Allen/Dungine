@@ -16,7 +16,7 @@ public class World implements Createable {
 		fromGameObject(go);
 	}
 	
-	private boolean doorAt(int x, int y, int d) {
+	public boolean doorAt(int x, int y, int d) {
 		if(y < 0 || y > rooms.size() - 1 || x < 0 || x > rooms.get(y).size() - 1)
 			return false;
 		return rooms.get(y).get(x).door(d);

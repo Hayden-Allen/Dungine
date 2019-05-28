@@ -13,8 +13,8 @@ public class Game {
 		definitions = new HashMap<String, GameObjectBase>();
 	}
 	
-	public ArrayList<World> worlds(){
-		return worlds;
+	public World currentWorld() {
+		return worlds.get(current);
 	}
 	public Player player() {
 		return p;
@@ -28,6 +28,17 @@ public class Game {
 	}
 	public void addWorld(World w) {
 		worlds.add(w);
+	}
+	public void move(int dx, int dy) {
+		int sign = (int)Math.signum(dx);
+		dx = Math.abs(dx);
+		while(dx-- > 0 && currentWorld().doorAt(p.x(), p.y(), sign > 0 ? Room.RIGHT : Room.LEFT))
+			p.addX(sign);
+			
+		sign = (int)Math.signum(dy);
+		dy = Math.abs(dy);
+		while(dy-- > 0 && currentWorld().doorAt(p.x(), p.y(), sign > 0 ? Room.DOWN : Room.UP))
+			p.addY(sign);
 	}
 	public void print() {
 		worlds.get(current).print(p);

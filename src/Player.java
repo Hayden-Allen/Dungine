@@ -8,6 +8,12 @@ public class Player extends Character {
 		fromGameObject(go);
 	}
 	
+	public void addX(int x) {
+		this.x += x;
+	}
+	public void addY(int y) {
+		this.y += y;
+	}
 	public void interact(Room r, Character c) {	//TODO: print out player info
 		
 	}

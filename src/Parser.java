@@ -2,7 +2,7 @@ import java.util.*;
 import java.io.*;
 public class Parser {
 	public static final char EOF = '\0';
-	public static final String DELIMETERS = ": \t\n{}[]()" + EOF;
+	public static final String DELIMETERS = " \t\n{}[]()" + EOF;
 	private int index = 0;
 	private String file;
 	
