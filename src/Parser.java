@@ -3,8 +3,8 @@ import java.io.*;
 public class Parser {
 	public static final char EOF = '\0';
 	public static final String DELIMETERS = ": \t\n{}[]()" + EOF;
-	private String file;
 	private int index = 0;
+	private String file;
 	
 	public Parser(String path) {//TODO: change the way file is stored to allow for errors w/ line numbers
 		try {
@@ -22,8 +22,26 @@ public class Parser {
 		index = start;
 	}
 	
+	public boolean hasNext() {
+		return index < file.length();
+	}
+	private boolean isClose(char c) {
+		return c == '}' || c == ']' || c == ')';
+	}
 	private boolean isDelim(char c) {
 		return DELIMETERS.indexOf(c) != -1;
+	}
+	private boolean isOpen(char c) {
+		return c == '{' || c == '[' || c == '(';
+	}
+	private char compliment(char c) {
+		if(c == '{')
+			return '}';
+		if(c == '[')
+			return ']';
+		if(c == '(')
+			return ')';
+		return '\0';
 	}
 	public char nextChar() {
 		if(hasNext())
@@ -42,8 +60,20 @@ public class Parser {
 			c = nextChar();
 		return c;
 	}
-	public boolean hasNext() {
-		return index < file.length();
+	public <E> Object nextE(E e) {	//TODO account for definitions
+		if(e instanceof Integer) {
+			String s = next();
+			if(s.startsWith("0b"))
+				return Integer.parseInt(s.substring(2), 2);
+			return Integer.parseInt(s);
+		}
+		if(e instanceof String)
+			return nextString();
+		if(e instanceof Boolean)
+			return Boolean.parseBoolean(next());
+		if(e instanceof java.lang.Character)
+			return nextNonDelim();
+		return null;
 	}
 	public String next() {
 		if(hasNext()) {
@@ -58,32 +88,7 @@ public class Parser {
 		}
 		return "";
 	}
-	public String nextString() {
-		String s = "";
-		char c = nextNonDelim();
-		if(c != '\"')
-			throw new InputMismatchException("String literal must begin with \"");
-		while((c = nextChar()) != EOF && c != '\"')
-			s += c;
-		return s;
-	}
-	
-	private boolean isOpen(char c) {
-		return c == '{' || c == '[' || c == '(';
-	}
-	private boolean isClose(char c) {
-		return c == '}' || c == ']' || c == ')';
-	}
-	private char compliment(char c) {
-		if(c == '{')
-			return '}';
-		if(c == '[')
-			return ']';
-		if(c == '(')
-			return ')';
-		return '\0';
-	}
-	public String nextBlock() {	//TODO assumes at start of block
+	public String nextBlock() {
 		String s = "";
 		Stack<java.lang.Character> parentheses = new Stack<java.lang.Character>();
 		
@@ -102,17 +107,15 @@ public class Parser {
 		}
 		return s.substring(0, s.length() - 1);
 	}
-	
-	public <E> Object nextE(E e) {	//TODO account for definitions
-		if(e instanceof Integer)
-			return Integer.parseInt(next());
-		if(e instanceof String)
-			return nextString();
-		if(e instanceof Boolean)
-			return Boolean.parseBoolean(next());
-		return null;
+	public String nextString() {
+		String s = "";
+		char c = nextNonDelim();
+		if(c != '\"')
+			throw new InputMismatchException("String literal must begin with \"");
+		while((c = nextChar()) != EOF && c != '\"')
+			s += c;
+		return s;
 	}
-	
 	public static void createGame(Game g) {
 		readHeader(Console.MAIN_FILEPATH, g);
 	}
@@ -125,6 +128,12 @@ public class Parser {
 				readHeader(p.nextString() + Console.FILE_TYPE, g);
 			else if(cmd.equals("read"))
 				readFile(p.nextString() + Console.FILE_TYPE, g);
+			else if(cmd.equals("define"))
+				g.addDefinition(p);
+			else if(cmd.equals("default")) {
+				String key = p.next();
+				Console.symbols.put(key, p.nextNonDelim());
+			}
 		}
 	}
 	public static void readFile(String fp, Game g) {

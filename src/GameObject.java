@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class GameObject extends GameObjectBase{
+public class GameObject extends GameObjectBase {
 	private ArrayList<GameObjectBase> elements;
 	
 	private GameObject(String key, ArrayList<GameObjectBase> elements) {
@@ -19,6 +19,8 @@ public class GameObject extends GameObjectBase{
 				return (E)gob;
 		throw new InputMismatchException("GameObject " + key() + " has no element " + key);
 	}
+	@Override
+	
 	public GameObject create(Parser p) {
 		Parser p2 = new Parser(p.nextBlock(), 0);
 		
@@ -31,17 +33,19 @@ public class GameObject extends GameObjectBase{
 			if(key.isEmpty())	//TODO why
 				break;
 			//System.out.println(key);
+			if(!temp.containsKey(key))
+				throw new InputMismatchException("Object \"" + this.key() + "\" has no element \"" + key + "\"");
 			temp.put(key, temp.get(key).create(p2));
 			//System.out.println(temp.get(key));
 		}
 		
 		return new GameObject(key, new ArrayList<GameObjectBase>(temp.values()));
-	}
+	}	
 	@Override
 	public String toString() {
 		String s = key + "{";
 		for(GameObjectBase gob : elements)
 			s += gob.toString() + " ";
-		return s + "}";
+		return s.substring(0, s.length() - 1) + "}";
 	}
 }

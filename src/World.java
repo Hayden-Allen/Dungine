@@ -12,14 +12,8 @@ public class World implements Createable {
 		this.id = id;
 	}
 	public World(GameObject go) {
+		rooms = new ArrayList<ArrayList<Room>>();
 		fromGameObject(go);
-	}
-	
-	public void fromGameObject(GameObject go) {	//TODO
-		id = go.<GameObjectAttribute<String>>element("id").value();
-	}
-	public String string() {
-		return String.format("world{id %s}", id);
 	}
 	
 	private boolean doorAt(int x, int y, int d) {
@@ -27,10 +21,13 @@ public class World implements Createable {
 			return false;
 		return rooms.get(y).get(x).door(d);
 	}
-	private String[] printRoom(Room r, int x, int y) {	//TODO: mod
+	public String string() {
+		return String.format("world{id %s}", id);
+	}
+	private String[] printRoom(Room r, Player p, int x, int y) {	//TODO: mod
 		int width = Console.<Integer>parameter("Room.Width"), height = Console.<Integer>parameter("Room.Height"), row = 0;
 		String[] rows = new String[height];
-		String tb = "+";
+		String tb = ""+Console.symbols.get("Wall.Corner");
 		
 		for(int i = 0; i < width - 2; i++)
 			tb += Console.symbols.get("Wall.EW");
@@ -41,7 +38,7 @@ public class World implements Createable {
 			String s = "" + Console.symbols.get("Wall.NS");
 			for(int j = 0; j < width - 2; j++) {
 				RoomObject ro = r.objectAt(j, i);
-				if(r.hidden())
+				if(r.hidden() && !(y == p.y() && x == p.x()))
 					s += Console.symbols.get("Room.Hidden." + ((i + j) % 2 == 0 ? "1" : "2"));
 				else if(ro != null)
 					s += ro.symbol();
@@ -64,20 +61,32 @@ public class World implements Createable {
 			if(r.door(bits[i]))
 				c = doorAt(x + dx[i], y + dy[i], bits2[i]) ? Console.symbols.get("Wall.Door") : Console.symbols.get("Wall.Door." + suffices[i]);
 			else if(doorAt(x + dx[i], y + dy[i], bits2[i]))
-				c = Console.symbols.get("Wall.Door" + suffices2[i]);
+				c = Console.symbols.get("Wall.Door." + suffices2[i]);
+			else
+				c = Console.symbols.get("Wall.Door.Closed." + (i < 2 ? "EW" : "NS"));
 			if(c != 0)
 				rows[indices[i]] = rows[indices[i]].substring(0, ends[i]) + c + rows[indices[i]].substring(starts[i]);
 		}
 		return rows;
 	}
-	public void print() {	//TODO: store to make more efficient
+	public void fromGameObject(GameObject go) {	//TODO
+		id = go.<GameObjectAttribute<String>>element("name").value();
+		
+		for(GameObjectList<GameObject> row : go.<GameObjectList<GameObjectList<GameObject>>>element("rooms").elements()) {
+			ArrayList<Room> cur = new ArrayList<Room>();
+			for(GameObject room : row.elements())
+				cur.add(new Room(room));
+			rooms.add(cur);
+		}
+	}
+	public void print(Player p) {	//TODO: store to make more efficient
 		ArrayList<String> rows = new ArrayList<String>();
 		
 		for(int i = 0; i < rooms.size(); i++) {
 			ArrayList<String> row = new ArrayList<String>();
 			
 			for(int j = 0; j < rooms.get(i).size(); j++) {
-				String[] s = printRoom(rooms.get(i).get(j), j, i);
+				String[] s = printRoom(rooms.get(i).get(j), p, j, i);
 				if(row.isEmpty())
 					row = new ArrayList<String>(Arrays.asList(s));
 				else
@@ -89,8 +98,11 @@ public class World implements Createable {
 		}
 		int height = Console.<Integer>parameter("Room.Height");
 		for(int i = height - 1; i < rows.size() - 1; i += height)
-			rows.remove(i--);	//account for removal
-			
+			rows.remove(i--);	//account for removal	
+		
+		int width = Console.<Integer>parameter("Room.Width"), x = p.x() * (width - 1) + width / 2, y = p.y() * (height - 1) + height / 2;
+		rows.set(y, rows.get(y).substring(0, x) + p.symbol() + rows.get(y).substring(x + 1));
+		
 		for(String s : rows)
 			System.out.println(s);
 	}

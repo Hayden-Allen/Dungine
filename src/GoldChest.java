@@ -12,15 +12,19 @@ public class GoldChest extends RoomObject implements Createable {
 		GameObject go = Console.<GameObject>template("gchest").create(p);
 		fromGameObject(go);
 	}
+	public GoldChest(GameObject go) {
+		fromGameObject(go);
+	}
 	
 	public void fromGameObject(GameObject go) {
+		super.fromGameObject(go.<GameObject>element("visual"));
 		gold = go.<GameObjectAttribute<Integer>>element("gold").value();
-	}
-	public String string() {
-		return String.format("gchest{gold %d}", gold);
 	}
 	public void interact(Room r, Character c) {
 		c.addGold(gold);
 		r.removeObject(this);
+	}
+	public String string() {
+		return String.format("gchest{%s gold %d}", super.string(), gold);
 	}
 }

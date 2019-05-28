@@ -1,20 +1,23 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Game {
-	private Player p;
 	private ArrayList<World> worlds;
 	private Map<String, GameObjectBase> definitions;
+	private Player p;
+	private int current = 0;
 	
 	public Game() {
 		worlds = new ArrayList<World>();
 		definitions = new HashMap<String, GameObjectBase>();
 	}
 	
-	public void setPlayer(Player p) {
-		this.p = p;
+	public ArrayList<World> worlds(){
+		return worlds;
 	}
-	public void addWorld(World w) {
-		worlds.add(w);
+	public Player player() {
+		return p;
 	}
 	public void addDefinition(Parser p) {
 		String type = p.next();
@@ -22,5 +25,15 @@ public class Game {
 		
 		if(definitions.containsKey(gob.key()))
 			System.out.printf("Warning: Redefinition of \"%s\" from %s to %s\n", gob.key(), definitions.get(gob.key()).toString(), gob.toString());
+	}
+	public void addWorld(World w) {
+		worlds.add(w);
+	}
+	public void print() {
+		worlds.get(current).print(p);
+		
+	}
+	public void setPlayer(Player p) {
+		this.p = p;
 	}
 }
