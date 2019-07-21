@@ -11,8 +11,8 @@ public class GameObjectAttribute<E> extends GameObjectBase {
 		return value;
 	}
 	@SuppressWarnings("unchecked")
-	public GameObjectAttribute<E> create(Parser p) {
-		E value = (E)p.<E>nextE(this.value);
+	public GameObjectAttribute<E> create(Parser p, Game g) {
+		E value = (E)p.<E>nextE(this.value, g);
 		
 		return new GameObjectAttribute<E>(key, value);
 	}

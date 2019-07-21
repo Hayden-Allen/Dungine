@@ -21,7 +21,7 @@ public class GameObject extends GameObjectBase {
 	}
 	@Override
 	
-	public GameObject create(Parser p) {
+	public GameObject create(Parser p, Game g) {
 		Parser p2 = new Parser(p.nextBlock(), 0);
 		
 		Map<String, GameObjectBase> temp = new HashMap<String, GameObjectBase>();
@@ -35,7 +35,7 @@ public class GameObject extends GameObjectBase {
 			//System.out.println(key);
 			if(!temp.containsKey(key))
 				throw new InputMismatchException("Object \"" + this.key() + "\" has no element \"" + key + "\"");
-			temp.put(key, temp.get(key).create(p2));
+			temp.put(key, temp.get(key).create(p2, g));
 			//System.out.println(temp.get(key));
 		}
 		

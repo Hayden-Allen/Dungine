@@ -18,6 +18,8 @@ public abstract class RoomObject implements Createable {
 		switch(go.key()) {
 		case "gchest":
 			return new GoldChest(go);
+		case "ichest":
+			return new ItemChest(go);
 		}
 		throw new InputMismatchException("Unable to create RoomObject with key \"" + go.key() + "\"");
 	}

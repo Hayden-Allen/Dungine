@@ -25,7 +25,7 @@ public class GameObjectList<E extends GameObjectBase> extends GameObjectBase {
 		return false;
 	}
 	@SuppressWarnings("unchecked")
-	public GameObjectList<E> create(Parser p) {
+	public GameObjectList<E> create(Parser p, Game g) {
 		Parser p2 = new Parser(p.nextBlock(), 0);
 		ArrayList<E> el = new ArrayList<E>();
 		
@@ -33,9 +33,12 @@ public class GameObjectList<E extends GameObjectBase> extends GameObjectBase {
 			String key = p2.next();
 			if(key.isEmpty())	//TODO why
 				break;
-			if(!allowed(key))
-				throw new InputMismatchException("Element \"" + key + "\" does not belong in list \"" + this.key + '\"');		
-			el.add((E)Console.template(key).create(p2));
+			else if(key.charAt(0) == '%')
+				el.add(g.definition(key.substring(1)));
+			else if(!allowed(key))
+				throw new InputMismatchException("Element \"" + key + "\" does not belong in list \"" + this.key + '\"');
+			else
+				el.add((E)Console.template(key).create(p2, g));
 		}
 		return new GameObjectList<E>(key, el);
 	}

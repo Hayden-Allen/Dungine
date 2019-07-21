@@ -18,6 +18,9 @@ public class Room implements Createable {
 		fromGameObject(go);
 	}
 	
+	public ArrayList<RoomObject> objects(){
+		return objects;
+	}
 	public boolean door(int d) {
 		return(doors & d) > 0;
 	}

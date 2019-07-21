@@ -16,6 +16,9 @@ public class World implements Createable {
 		fromGameObject(go);
 	}
 	
+	public ArrayList<ArrayList<Room>> rooms(){
+		return rooms;
+	}
 	public boolean doorAt(int x, int y, int d) {
 		if(y < 0 || y > rooms.size() - 1 || x < 0 || x > rooms.get(y).size() - 1)
 			return false;
@@ -100,7 +103,9 @@ public class World implements Createable {
 		for(int i = height - 1; i < rows.size() - 1; i += height)
 			rows.remove(i--);	//account for removal	
 		
-		int width = Console.<Integer>parameter("Room.Width"), x = p.x() * (width - 1) + width / 2, y = p.y() * (height - 1) + height / 2;
+		int width = Console.<Integer>parameter("Room.Width"), 
+				x = p.x() * (width - 1) + width / 2, 
+				y = p.y() * (height - 1) + height / 2;
 		rows.set(y, rows.get(y).substring(0, x) + p.symbol() + rows.get(y).substring(x + 1));
 		
 		for(String s : rows)

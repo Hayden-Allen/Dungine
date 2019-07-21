@@ -12,8 +12,8 @@ public class StatList implements Createable {
 	public StatList(GameObject go) {
 		fromGameObject(go);
 	}
-	public StatList(Parser p) {
-		GameObject go = Console.<GameObject>template("stats").create(p);
+	public StatList(Parser p, Game g) {
+		GameObject go = Console.<GameObject>template("stats").create(p, g);
 		fromGameObject(go);
 	}
 	
@@ -37,5 +37,9 @@ public class StatList implements Createable {
 	}
 	public int spd() {
 		return spd;
+	}
+	@Override
+	public String toString() {
+		return String.format("atk: %d | def: %d | spd: %d", atk, def, spd);
 	}
 }

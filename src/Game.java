@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class Game {
 	private ArrayList<World> worlds;
-	private Map<String, GameObjectBase> definitions;
+	public Map<String, GameObjectBase> definitions;
 	private Player p;
 	private int current = 0;
 	
@@ -13,18 +13,30 @@ public class Game {
 		definitions = new HashMap<String, GameObjectBase>();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public <E extends GameObjectBase> E definition(String key) {
+		return (E)definitions.get(key);
+	}
 	public World currentWorld() {
 		return worlds.get(current);
+	}
+	public Room currentRoom() {
+		return currentWorld().rooms().get(p.y()).get(p.x());
 	}
 	public Player player() {
 		return p;
 	}
 	public void addDefinition(Parser p) {
-		String type = p.next();
-		GameObjectBase gob = GameObjectBase.create(type, p);
+		String type = p.next(), key = "";
+		if(GameObjectBase.isObject(type))
+			key = p.next();
+		
+		GameObjectBase gob = GameObjectBase.create(type, p, this);
 		
 		if(definitions.containsKey(gob.key()))
 			System.out.printf("Warning: Redefinition of \"%s\" from %s to %s\n", gob.key(), definitions.get(gob.key()).toString(), gob.toString());
+		
+		definitions.put((!key.isEmpty() ? key : gob.key()), gob);
 	}
 	public void addWorld(World w) {
 		worlds.add(w);

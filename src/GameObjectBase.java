@@ -2,20 +2,20 @@
 public abstract class GameObjectBase {
 	protected String key;
 	
-	public abstract GameObjectBase create(Parser p);
+	public abstract GameObjectBase create(Parser p, Game g);
 	
-	private static boolean isAttrib(String s) {
+	public static boolean isAttrib(String s) {
 		return s.equals(Console.keywords.get("Type.String")) || s.equals(Console.keywords.get("Type.Integer")) || s.equals(Console.keywords.get("Type.Float"));
 	}
-	private static boolean isList(String s) {
+	public static boolean isList(String s) {
 		return s.equals(Console.keywords.get("Type.List"));
 	}
-	private static boolean isObject(String s) {
+	public static boolean isObject(String s) {
 		return s.equals(Console.keywords.get("Type.Object"));
 	}
-	public static GameObjectBase create(String type, Parser p) {
+	public static GameObjectBase create(String type, Parser p, Game g) {
+		String key = p.next();
 		if(isAttrib(type)) {
-			String key = p.next();
 			if(type.equals(Console.keywords.get("Type.String")))
 				return new GameObjectAttribute<String>(key, p.nextString());
 			if(type.equals(Console.keywords.get("Type.Integer")))
@@ -23,6 +23,9 @@ public abstract class GameObjectBase {
 		}
 		if(isList(type)) {
 			
+		}
+		if(isObject(type)) {
+			return Console.<GameObject>template(key).create(p, g);
 		}
 		return null;
 	}

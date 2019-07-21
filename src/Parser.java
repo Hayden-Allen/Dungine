@@ -60,19 +60,41 @@ public class Parser {
 			c = nextChar();
 		return c;
 	}
-	public <E> Object nextE(E e) {	//TODO account for definitions
+	public <E> Object nextE(E e, Game g) {	//TODO account for definitions
 		if(e instanceof Integer) {
 			String s = next();
 			if(s.startsWith("0b"))
 				return Integer.parseInt(s.substring(2), 2);
+			if(s.charAt(0) == '%') 
+				return g.<GameObjectAttribute<Integer>>definition(s.substring(1)).value();
 			return Integer.parseInt(s);
 		}
-		if(e instanceof String)
+		if(e instanceof String) {
+			if(peek().charAt(0) == '%')
+				return g.<GameObjectAttribute<String>>definition(next().substring(1)).value();
 			return nextString();
+		}
 		if(e instanceof Boolean)
 			return Boolean.parseBoolean(next());
 		if(e instanceof java.lang.Character)
 			return nextNonDelim();
+		return null;
+	}
+	public String peek() {
+		int i = 0;
+		if(hasNext()) {
+			String s = "";
+			char c;
+			while((c = nextChar()) != EOF && !isDelim(c)) {
+				s += c;
+				i++;
+			}
+			if(s.isEmpty())
+				return peek();
+			index--;
+			index -= i;
+			return s;
+		}
 		return null;
 	}
 	public String next() {
@@ -114,7 +136,13 @@ public class Parser {
 			throw new InputMismatchException("String literal must begin with \"");
 		while((c = nextChar()) != EOF && c != '\"')
 			s += c;
-		return s;
+		return s.replaceAll("\\\\n", "\n");
+	}
+	public int nextInt() {	//TODO defines
+		return Integer.parseInt(next());
+	}
+	public boolean nextBool() {
+		return Boolean.parseBoolean(next());
 	}
 	public static void createGame(Game g) {
 		readHeader(Console.MAIN_FILEPATH, g);
@@ -130,9 +158,19 @@ public class Parser {
 				readFile(p.nextString() + Console.FILE_TYPE, g);
 			else if(cmd.equals("define"))
 				g.addDefinition(p);
-			else if(cmd.equals("default")) {
+			else if(cmd.equals("symbol")) {
 				String key = p.next();
 				Console.symbols.put(key, p.nextNonDelim());
+			}
+			else if(cmd.equals("param")) {
+				String type = p.next().trim(), key = p.next();
+				
+				if(type.equals(Console.keywords.get("Type.String"))) 
+					Console.parameters.put(key, p.nextString());
+				else if(type.equals(Console.keywords.get("Type.Integer")))
+					Console.parameters.put(key, p.nextInt());
+				else if(type.equals(Console.keywords.get("Type.Boolean")))
+					Console.parameters.put(key, p.nextBool());
 			}
 		}
 	}
@@ -143,9 +181,9 @@ public class Parser {
 			String key = p.next();
 			
 			if(key.equals("player"))
-				g.setPlayer(new Player(Console.<GameObject>template("player").create(p)));
+				g.setPlayer(new Player(Console.<GameObject>template("player").create(p, g)));
 			if(key.equals("world"))
-				g.addWorld(new World(Console.<GameObject>template("world").create(p)));
+				g.addWorld(new World(Console.<GameObject>template("world").create(p, g)));
 		}
 	}
 }

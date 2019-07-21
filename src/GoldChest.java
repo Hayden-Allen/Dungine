@@ -8,8 +8,8 @@ public class GoldChest extends RoomObject implements Createable {
 		this.gold = gold;
 		symbol = Console.symbols.get("Chest.Gold");
 	}
-	public GoldChest(Parser p) {
-		GameObject go = Console.<GameObject>template("gchest").create(p);
+	public GoldChest(Parser p, Game g) {
+		GameObject go = Console.<GameObject>template("gchest").create(p, g);
 		fromGameObject(go);
 	}
 	public GoldChest(GameObject go) {
@@ -22,6 +22,7 @@ public class GoldChest extends RoomObject implements Createable {
 	}
 	public void interact(Room r, Character c) {
 		c.addGold(gold);
+		Console.log("Found %d gold!", gold);
 		r.removeObject(this);
 	}
 	public String string() {
