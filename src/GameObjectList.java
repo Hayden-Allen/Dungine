@@ -1,53 +1,53 @@
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.Arrays;
 
 public class GameObjectList<E extends GameObjectBase> extends GameObjectBase {
-	private ArrayList<E> elements, accepted;
+	private ArrayList<E> accepted, elements;
 	
 	@SafeVarargs
-	public GameObjectList(String key, E...elements) {
-		this.key = key;
-		accepted = new ArrayList<E>(Arrays.asList(elements));
+	public GameObjectList(String key, E...accepted) {
+		super(key);
+		this.accepted = new ArrayList<E>(Arrays.asList(accepted));
+		this.elements = new ArrayList<E>();
 	}
-	public GameObjectList(String key, ArrayList<E> elements) {
-		this.key = key;
+	private GameObjectList(String key, ArrayList<E> accepted, ArrayList<E> elements) {
+		super(key);
+		this.accepted = accepted;
 		this.elements = elements;
 	}
 	
-	public ArrayList<E> elements() {
-		return elements;
-	}
-	private boolean allowed(String key) {
-		for(GameObjectBase go : accepted)
-			if(go.key().equals(key))
-				return true;
-		return false;
-	}
 	@SuppressWarnings("unchecked")
-	public GameObjectList<E> create(Parser p, Game g) {
-		Parser p2 = new Parser(p.nextBlock(), 0);
-		ArrayList<E> el = new ArrayList<E>();
-		
+	public GameObjectList<E> create(Parser p) {
+		Parser p2 = new Parser(p.file(), p.nextBlock());
+		ArrayList<E> temp = new ArrayList<E>();
 		while(p2.hasNext()) {
 			String key = p2.next();
 			if(key.isEmpty())	//TODO why
-				break;
-			else if(key.charAt(0) == '%')
-				el.add(g.definition(key.substring(1)));
-			else if(!allowed(key))
-				throw new InputMismatchException("Element \"" + key + "\" does not belong in list \"" + this.key + '\"');
-			else
-				el.add((E)Console.template(key).create(p2, g));
+				continue;
+			
+			E element = acceptedElement(key);
+			if(element == null)
+				throw new Error("GameObjectList \"" + this.key + "\" has no element \"" + key + "\".");		
+			temp.add((E)element.create(p2));
 		}
-		return new GameObjectList<E>(key, el);
+		return new GameObjectList<E>(key, accepted, temp);
+	}
+	private E acceptedElement(String key) {
+		for(E e : accepted)
+			if(e.key.equals(key))
+				return e;
+		return null;
+	}
+	public ArrayList<E> elements() {
+		return elements;
 	}
 	@Override
 	public String toString() {
-		String s = key + "[";
-		if(elements != null)
-			for(GameObjectBase gob : elements)
-				s += gob.toString() + " ";
-		return s.substring(0, s.length() - 1) + "]";
+		String s = key + ":[";
+		for(GameObjectBase gob : elements)
+			s += gob.toString() + ",";
+		if(s.contains(","))
+			s = s.substring(0, s.lastIndexOf(","));
+		return s + "]";
 	}
 }

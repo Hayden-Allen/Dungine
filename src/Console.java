@@ -1,313 +1,403 @@
-import java.util.*;
-import java.io.*;
-
+import java.io.File;
+import java.util.Scanner;
 
 public class Console {
-	public static ArrayList<GameObjectBase> templates;
-	public static Map<String, String> keywords;
-	public static Map<String, ArrayList<String>> commands;
-	public static Map<String, Object> parameters;
-	public static Map<String, java.lang.Character> symbols;
-	public static Map<ArrayList<String>, GameFunction> commandfns;
-	public static String BASE_FILEPATH, MAIN_FILEPATH, FILE_TYPE, TITLE_CARD;
+	public static Parser parser;	
+	public static ParameterList registryRoot = new ParameterList("root");
 	
-	@SafeVarargs
-	public static<E> E[] arr(E...es) {
-		return es;
+	public static int addParam(String path, ParameterBase pb) {
+		ParameterList pl = registryRoot.getPath(path, true);
+		if(pl == null)
+			return -2;	//DNE
+		ParameterBase prev = pl.getElement(pb.key());
+		
+		if(prev != null) {	//overwrite current value if it exists
+			pl.removeElement(pb.key());
+			pl.addElement(pb);
+		}
+		else if(!pl.noNew())	//if it doesn't exist and you can create new values in this list
+			pl.addElement(pb);
+		else	//fail
+			return -1;
+		
+		if(prev != null)
+			return 1; //success with warning
+		
+		return 0;	//success
+	}
+	@SuppressWarnings("unchecked")
+	public static <E extends ParameterBase> E getParam(String path) {
+		path = path.toUpperCase();
+		int end = path.contains(".") ? path.lastIndexOf(".") : path.length();
+		ParameterList pl = registryRoot.getPath(path.substring(0, end), false);
+		
+		if(end == path.length())
+			return (E)pl;
+		if(pl == null)
+			return null;
+		
+		E ret = pl.<E>getElement(path.substring(end + 1));
+		if(ret != null)
+			return ret;
+		parser.err(Parser.PARAM_DNE, path);
+		return null;
+	}
+	public static boolean validPath(String path) {
+		path = path.toUpperCase();
+		int end = path.contains(".") ? path.lastIndexOf(".") : path.length();
+		ParameterList pl = registryRoot.getPath(path.substring(0, end), false);
+		
+		if(pl != null)
+			return pl.getElement(path.substring(end + 1)) != null;
+		return false;
+	}
+	
+	public static <E> GameObjectAttribute<E> goa(String key, E value){
+		return new GameObjectAttribute<E>(key, value);
 	}
 	@SafeVarargs
-	public static<E> ArrayList<E> arrl(E...es){
-		return new ArrayList<E>(Arrays.asList(es));
+	public static <E extends GameObjectBase> GameObjectList<E> gol(String key, E...values){
+		return new GameObjectList<E>(key, values);
 	}
-	private static GameObject go(String key, GameObjectBase...elements) {
+	public static GameObject go(String key, GameObjectBase...elements) {
 		return new GameObject(key, elements);
 	}
-	private static<E> GameObjectAttribute<E> goa(String key, E value) {
-		return new GameObjectAttribute<E>(key, value);
-	}	
-	@SafeVarargs
-	private static<E extends GameObjectBase> GameObjectList<E> gol(String key, E...elements){
-		return new GameObjectList<E>(key, elements);
+	
+	public static <E> Parameter<E> p(String key, E value){
+		return new Parameter<E>(key, value);
 	}
+	public static ParameterList pl(String key) {
+		return new ParameterList(key);
+	}
+	
+	public static boolean echo() {
+		ParameterList con = registryRoot.getPath("con", false);
+		if(con == null)
+			return false;
+		ParameterList setting = con.getPath("setting", false);
+		if(setting == null)
+			return false;
+		Parameter<Boolean> echo = setting.getElement("echo");
+		if(echo == null)
+			return false;
+		return echo.value();
+	}
+	public static <E> GameObjectAttribute<E> rgoa(String path){
+		return Console.<Parameter<GameObjectAttribute<E>>>getParam("Lang.Template.Attribute." + path).value();
+	}
+	public static <E extends GameObjectBase> GameObjectList<E> rgol(String path){
+		return Console.<Parameter<GameObjectList<E>>>getParam("Lang.Template.List." + path).value();
+	}
+	public static GameObject rgo(String path) {
+		return Console.<Parameter<GameObject>>getParam("Lang.Template.Object." + path).value();
+	}
+	public static GameFunction rcmd(String path) {
+		return Console.<Parameter<GameFunction>>getParam("Con.Cmd." + path).value();
+	}
+	public static String rlang(String path){
+		return Console.<Parameter<String>>getParam("Lang." + path).value();
+	}
+	public static <E> E rsetting(String path) {
+		return Console.<Parameter<E>>getParam("con.setting." + path).value();
+	}
+	public static char rgraphic(String path) {
+		return Console.<Parameter<java.lang.Character>>getParam("con.graphic." + path).value();
+	}
+	public static String rgraphics(String path) {
+		return Console.<Parameter<String>>getParam("con.graphic." + path).value();
+	}
+	
 	public static void init() {
-		BASE_FILEPATH = (new File("")).getAbsolutePath();
-		BASE_FILEPATH = BASE_FILEPATH.substring(0, BASE_FILEPATH.lastIndexOf("\\")) + '\\';
-		MAIN_FILEPATH = "main.txt";
-		FILE_TYPE = ".txt";
-		TITLE_CARD = "\n" +
-					 " \\-----\\   /     \\   |\\     \\   /-----\\   /--+--\\   |\\     \\   /-----\\\n" + 
-					 "  |    |   |     |   | \\    |   |            |      | \\    |   |\n" + 
-				     "  |    |   |     |   |  \\   |   |            |      |  \\   |   +-----\n" + 
-					 "  |    |   |     |   |   \\  |   |  /--\\      |      |   \\  |   |\n" + 
-				     "  |    |   |     |   |    \\ |   |     |      |      |    \\ |   |\n" + 
-					 " /-----/   \\-----/   \\     \\|   \\-----/   \\--+--/   \\     \\|   \\-----/\n";
+		addParam("", pl("USER"));
+		addParam("user", p("test", "test"));
+		addParam("", pl("CON"));
+		addParam("CON", pl("SETTING"));
+		addParam("con.setting", p("echo", true));
+		addParam("con.setting", p("stutter", 20));
+		addParam("con.setting", p("input", "<< "));
+		addParam("con.setting", p("output", ">> "));
+		addParam("con.setting", p("maponmove", false));
+		addParam("con.setting", pl("invalid"));
+		addParam("con.setting.invalid", p("cmd", "Invalid command."));
+		addParam("con.setting.invalid", p("dir", "Invalid direction."));
+		addParam("con.setting.invalid", pl("target"));
+		addParam("con.setting.invalid.target", p("name", "That enemy doesn't exist."));
+		addParam("con.setting.invalid.target", p("index", "Invalid enemy index."));
+		addParam("con.setting", pl("hit"));
+		addParam("con.setting.hit", p("print", true));
+		addParam("con.setting.hit", p("string", "%s hits %s for %d damage!"));
+		addParam("con.setting", pl("encounter"));
+		addParam("con.setting.encounter", p("attack", "What do you do?"));
+		addParam("con.setting.encounter", p("victory", "You are victorious!"));
+		addParam("con.setting.encounter", p("money", "You gain %d gold!"));
+		addParam("con.setting.encounter", pl("flee"));
+		addParam("con.setting.encounter.flee", p("success", "You escape the monsters!"));
+		addParam("con.setting.encounter.flee", p("fail", "You are too slow to escape."));
+		addParam("con.setting", pl("currency"));
+		addParam("con.setting.currency", p("name", "gold"));
+		addParam("con.setting.currency", p("suffix", "G"));
+		
+		addParam("CON", pl("CMD"));
+		addParam("CON", pl("GRAPHIC"));
+		addParam("con.graphic", pl("room"));
+		addParam("con.graphic.room", pl("wall"));
+		addParam("con.graphic.room.wall", p("corner", '+'));
+		addParam("con.graphic.room.wall", p("ns", '|'));
+		addParam("con.graphic.room.wall", p("ew", '-'));
+		addParam("con.graphic.room", pl("door"));
+		addParam("con.graphic.room.door", p("open", ' '));
+		addParam("con.graphic.room.door", p("n", '^'));
+		addParam("con.graphic.room.door", p("w", '<'));
+		addParam("con.graphic.room.door", p("s", 'v'));
+		addParam("con.graphic.room.door", p("e", '>'));
+		addParam("con.graphic.room.door", pl("closed"));
+		addParam("con.graphic.room.door.closed", p("ns", '|'));
+		addParam("con.graphic.room.door.closed", p("ew", '-'));
+		addParam("con.graphic", pl("inventory"));
+		addParam("con.graphic.inventory", p("corner", '+'));
+		addParam("con.graphic.inventory", pl("bullet"));
+		addParam("con.graphic.inventory.bullet", p("weapon", 'W'));
+		addParam("con.graphic.inventory.bullet", p("armor", 'A'));
+		addParam("con.graphic.inventory.bullet", p("consumable", 'C'));
+		addParam("con.graphic.inventory", pl("border"));
+		addParam("con.graphic.inventory.border", p("ns", '|'));
+		addParam("con.graphic.inventory.border", p("ew", '-'));
+		addParam("con.graphic.inventory", pl("title"));
+		addParam("con.graphic.inventory.title", p("divide", '/'));
+		addParam("con.graphic.inventory.title", pl("parentheses"));
+		addParam("con.graphic.inventory.title.parentheses", p("open", '['));
+		addParam("con.graphic.inventory.title.parentheses", p("close", ']'));
+		addParam("con.graphic.inventory", pl("stat"));
+		addParam("con.graphic.inventory.stat", p("atk", "atk"));
+		addParam("con.graphic.inventory.stat", p("def", "def"));
+		addParam("con.graphic.inventory.stat", p("spd", "spd"));
+		addParam("con.graphic.inventory.stat", p("open", '('));
+		addParam("con.graphic.inventory.stat", p("close", ')'));
+		addParam("con.graphic.inventory.stat", pl("separator"));
+		addParam("con.graphic.inventory.stat.separator", p("name", ','));
+		addParam("con.graphic.inventory.stat.separator", p("value", ':'));
+		addParam("con.graphic", pl("stats"));
+		addParam("con.graphic.stats", p("name", "name"));
+		addParam("con.graphic.stats", p("hp", "hp"));
+		addParam("con.graphic.stats", p("atk", "atk"));
+		addParam("con.graphic.stats", p("def", "def"));
+		addParam("con.graphic.stats", p("spd", "spd"));
+		addParam("con.graphic.stats", p("worth", "worth"));
+		addParam("con.graphic.stats", p("open", '['));
+		addParam("con.graphic.stats", p("close", ']'));
+		addParam("con.graphic.stats", pl("separator"));
+		addParam("con.graphic.stats.separator", p("value", ':'));
+		addParam("con.graphic.stats.separator", p("stat", ','));
+		addParam("con.graphic.stats", pl("bonus"));
+		addParam("con.graphic.stats.bonus", p("open", '('));
+		addParam("con.graphic.stats.bonus", p("close", ')'));
+		addParam("con.graphic.stats.bonus", p("positive", '+'));
+		addParam("con.graphic.stats.bonus", p("negative", '-'));
+		addParam("con.graphic", pl("help"));
+		addParam("con.graphic.help", p("corner", '+'));
+		addParam("con.graphic.help", p("borderns", '|'));
+		addParam("con.graphic.help", p("borderew", '-'));
+		addParam("con.graphic.help", p("separator", ':'));
+		addParam("con.graphic.help", p("required", '*'));
+		addParam("con.graphic.help", p("optional", '-'));
+		
+		
+		addParam("", pl("LANG"));
+		addParam("lang", p("rootdir", new File("").getAbsolutePath() + "\\LocalFiles\\"));
+		addParam("LANG", p("MAIN", rlang("rootdir") + "main.dgnh"));
+		addParam("LANG", pl("KEY"));
+		addParam("lang.key", p("bin", "0b"));
+		addParam("lang.key", pl("read"));
+		addParam("lang.key.read", p("header", "import"));
+		addParam("lang.key.read", p("game", "read"));
+		addParam("lang.key", p("param", "param"));
+		addParam("lang.key", p("define", "define"));
+		addParam("LANG", pl("TEMPLATE"));
+		addParam("LANG.TEMPLATE", pl("ATTRIBUTE"));
+		addParam("LANG.TEMPLATE", pl("LIST"));
+		addParam("LANG.TEMPLATE", pl("OBJECT"));
+		
+		//stats
+		addParam("lang.template.attribute", p("name", goa("name", "NONAME")));
+		addParam("lang.template.attribute", p("atk", goa("atk", 0)));
+		addParam("lang.template.attribute", p("def", goa("def", 0)));
+		addParam("lang.template.attribute", p("spd", goa("spd", 0)));
+		addParam("lang.template.object", p("stats", go("stats", rgoa("name"), rgoa("atk"), rgoa("def"), rgoa("spd"))));
+		
+		//visual (RoomObject)
+		addParam("lang.template.attribute", p("x", goa("x", 0)));
+		addParam("lang.template.attribute", p("y", goa("y", 0)));
+		addParam("lang.template.attribute", p("symbol", goa("symbol", 'X')));
+		addParam("lang.template.object", p("visual", new GameObject("visual", rgoa("x"), rgoa("y"), rgoa("symbol"))));
+		
+		//gold chest
+		addParam("lang.template.attribute", p("gold", goa("gold", 0)));
+		addParam("lang.template.object", p("gchest", go("gchest", rgo("visual"), rgoa("gold"))));
 
-		symbols = new HashMap<String, java.lang.Character>();
-		parameters = new HashMap<String, Object>();
-		templates = new ArrayList<GameObjectBase>();
-		keywords = new HashMap<String, String>();
-		commands = new HashMap<String, ArrayList<String>>();
-		commandfns = new HashMap<ArrayList<String>, GameFunction>();
+		//items
+		addParam("lang.template.attribute", p("desc", goa("desc", "NODESC")));
+		addParam("lang.template.attribute", p("rarity", goa("rarity", 0)));
+		addParam("lang.template.attribute", p("value", goa("value", 0)));
+		addParam("lang.template.object", p("weapon", go("weapon", rgo("stats"), rgoa("desc"), rgoa("rarity"), rgoa("value"))));
+		addParam("lang.template.attribute", p("floor", goa("floor", 0)));
+		addParam("lang.template.object", p("armor", go("armor", rgo("stats"), rgoa("desc"), rgoa("rarity"), rgoa("value"), rgoa("floor"))));
+		addParam("lang.template.attribute", p("duration", goa("duration", 1)));
+		addParam("lang.template.attribute", p("self", goa("self", false)));
+		addParam("lang.template.attribute", p("hp", goa("hp", 0)));
+		addParam("lang.template.object", p("consumable", go("consumable", rgo("stats"), rgoa("desc"), rgoa("rarity"), rgoa("value"), rgoa("hp"), rgoa("duration"), rgoa("self"))));
 		
-		symbols.put("Wall.NS", '|');
-		symbols.put("Wall.EW", '-');
-		symbols.put("Wall.Corner", '+');
-		symbols.put("Wall.Door", ' ');
-		symbols.put("Wall.Door.Up", '^');
-		symbols.put("Wall.Door.Down", 'v');
-		symbols.put("Wall.Door.Left", '<');
-		symbols.put("Wall.Door.Right", '>');
-		symbols.put("Wall.Door.Closed.NS", '|');
-		symbols.put("Wall.Door.Closed.EW", '-');
-		symbols.put("Room.Empty", ' ');
-		symbols.put("Room.Hidden.1", '\\');
-		symbols.put("Room.Hidden.2", '/');
+		//inventory
+		addParam("lang.template.attribute", p("size", goa("size", 5)));
+		addParam("lang.template.list", p("items", gol("items", rgo("weapon"), rgo("armor"), rgo("consumable"))));
+		addParam("lang.template.object", p("inventory", go("inventory", rgoa("size"), rgol("items"))));
 		
-		parameters.put("Room.Width", 7);
-		parameters.put("Room.Height", 5);
-		parameters.put("Text.Speed", 2);
-		parameters.put("Error.Message", "Invalid command");
-		parameters.put("Output.Start", ">> ");
-		parameters.put("Input.Start", "<< ");
-		parameters.put("Description.Empty", "No description");
+		//characters
+		addParam("lang.template.attribute", p("dcgold", goa("dcgold", 0)));
+		addParam("lang.template.attribute", p("dcarmor", goa("dcarmor", 0)));
+		addParam("lang.template.attribute", p("dcweapon", goa("dcweapon", 0)));
+		addParam("lang.template.object", p("enemy", go("enemy", rgoa("hp"), rgoa("gold"), rgo("visual"), 
+					rgoa("dcgold"), rgoa("dcarmor"), rgoa("dcweapon"), rgo("inventory"), rgo("stats"))));
 		
-		parameters.put("Draw.Move", "move");
-		parameters.put("Draw.Always", "always");
-		parameters.put("Draw.Never", "never");
-		parameters.put("World.Draw", Console.<String>parameter("Draw.Move"));
+		//room.objects
+		addParam("lang.template.list", p("objects", gol("objects", rgo("gchest"), rgo("enemy"))));
 		
-		templates.add(Console.<java.lang.Character>goa("symbol", '?'));
-		templates.add(Console.<Integer>goa("x", 0));
-		templates.add(Console.<Integer>goa("y", 0));
-		templates.add(Console.<Integer>goa("hp", 5));
-		templates.add(Console.<Integer>goa("atk", 0));
-		templates.add(Console.<Integer>goa("def", 0));
-		templates.add(Console.<Integer>goa("spd", 0));
-		templates.add(Console.<Integer>goa("gold", 0));
-		templates.add(Console.<Integer>goa("doors", 0));
-		templates.add(Console.<Integer>goa("rarity", 1));
-		templates.add(Console.<Integer>goa("value", 0));
-		templates.add(Console.<Integer>goa("size", 5));
-		templates.add(Console.<Integer>goa("floor", 0));
-		templates.add(Console.<String>goa("name", ""));
-		templates.add(Console.<String>goa("desc", ""));
-		templates.add(Console.<Boolean>goa("hidden", false));
+		//room
+		addParam("lang.template.attribute", p("hidden", goa("hidden", false)));
+		addParam("lang.template.attribute", p("doors", goa("doors", 0)));
+		addParam("lang.template.attribute", p("onenter", goa("onenter", "")));
+		addParam("lang.template.attribute", p("onexit", goa("onexit", "")));
+		addParam("lang.template.object", p("text", go("text", rgoa("onenter"), rgoa("onexit"))));
+		addParam("lang.template.object", p("room", go("room", rgo("text"), rgoa("doors"), rgoa("hidden"), rgol("objects"))));
 		
-		templates.add(Console.go("visual", template("x"), template("y"), template("symbol")));
-		templates.add(Console.go("gchest", template("visual"), template("gold")));
+		//world
+		addParam("lang.template.list", p("row", gol("row", rgo("room"))));
+		addParam("lang.template.list", p("rooms", gol("rooms", rgol("row"))));
 		
-		templates.add(Console.go("stats", template("name"), template("atk"), template("def"), template("spd")));
-		templates.add(Console.go("weapon", template("stats"), template("desc"), template("rarity"), template("value")));
-		templates.add(Console.go("armor", template("stats"), template("desc"), template("rarity"), template("value"), template("floor")));
-		
-		templates.add(Console.<GameObject>gol("items", template("weapon"), template("armor")));
-		templates.add(Console.go("inventory", template("size"), template("items")));
-		templates.add(Console.go("ichest", template("visual"), template("items")));
-		
-		templates.add(Console.go("player", template("visual"), template("stats"), template("hp"), template("gold"), template("inventory")));
-		
-		templates.add(Console.<GameObject>gol("objects", template("gchest"), template("ichest")));
-		templates.add(Console.go("room", template("doors"), template("hidden"), template("objects")));
-		templates.add(Console.<GameObject>gol("row", template("room")));
-		templates.add(Console.<GameObjectList<GameObject>>gol("rooms", template("row")));
-		templates.add(Console.go("world", template("name"), template("rooms")));
-		
-		keywords.put("Type.String", "string");
-		keywords.put("Type.Integer", "int");
-		keywords.put("Type.Boolean", "bool");
-		keywords.put("Type.Object", "item");
-		keywords.put("Type.List", "list");
-		
-		
-		commands.put("Direction.Up", Console.<String>arrl("u", "up", "n", "north"));
-		commands.put("Direction.Left", Console.<String>arrl("l", "left", "w", "west"));
-		commands.put("Direction.Down", Console.<String>arrl("d", "down", "s", "south"));
-		commands.put("Direction.Right", Console.<String>arrl("r", "right", "e", "east"));
+		addParam("LANG", pl("TLO"));
+		addParam("lang.tlo", p("world", go("world", rgoa("name"), rgol("rooms"))));
+		addParam("lang.tlo", p("player", go("player", rgoa("hp"), rgoa("gold"), rgo("visual"), rgo("stats"), rgo("inventory"))));
+
 		
 		
 		
-		commandfns.put(arrl("go", "move"), (String s, Game g) -> {
-			Scanner in = new Scanner(s);
-			while(in.hasNext()) {
-				String dir = in.next();
-				int times = 1;
-				if(in.hasNextInt()) 
-					times = in.nextInt();
-				
-				for(String str : commands.get("Direction.Up"))
-					if(str.equals(dir))
-						g.move(0, -times);
-				for(String str : commands.get("Direction.Left"))
-					if(str.equals(dir)) 
-						g.move(-times, 0);
-				for(String str : commands.get("Direction.Down"))
-					if(str.equals(dir)) 
-						g.move(0, times);
-				for(String str : commands.get("Direction.Right"))
-					if(str.equals(dir)) 
-						g.move(times, 0);
+		addParam("con.cmd", p("map", (GameFunction)(String s, Game g) -> 
+		{
+			g.draw();
+		}));
+		addParam("con.cmd", p("move", (GameFunction)(String input, Game g) ->
+		{
+			Scanner s = new Scanner(input);
+			s.next();	//eat "move"
+			
+			if(!s.hasNext()) {
+				Console.logn("Specify a direction (up, left, down, right).");
+				s.close();
+				return;
 			}
-			if(Console.<String>parameter("World.Draw").equals(Console.<String>parameter("Draw.Move")))
-				g.print();
-			in.close();
-		});
-		commandfns.put(arrl("inv", "inventory"), (String s, Game g) -> {	//TODO display size
-			boolean stats = s.endsWith("-stats");
-			Weapon w = g.player().weapon();
-			Armor a = g.player().armor();
-			ArrayList<String> lines = new ArrayList<String>();
 			
-			lines.add(String.format("Weapon: %s", (w != null ? w.stats().name() : "N/A") + (stats ? ":" + w.stats().toString() : "")));
-			lines.add(String.format("Armor : %s", (a != null ? a.stats().name() : "N/A") + (stats ? ":" + a.stats().toString() : "")));
+			String dir = s.next();
+			int times = 1;
+			if(s.hasNextInt())
+				times = s.nextInt();
 			
-			for(Item i : g.player().inv().items())
-				if(i != w && i != a)
-					lines.add(String.format("   >%s", i.stats().name() + (stats ? ":" + i.stats().toString() : "")));
+			g.movePlayer(dir, times);
+			s.close();
+		}));
+		addParam("con.cmd", p("inv", (GameFunction)(String s, Game g) ->
+		{
+			g.player().inv().print();
+		}));
+		addParam("con.cmd", p("stats", (GameFunction)(String s, Game g) ->
+		{
+			g.player().print();
+		}));
+		addParam("con.cmd", p("help", (GameFunction)(String s, Game g) ->
+		{
+			String[] cmds = {
+				"map", "move " + Console.rgraphic("help.required") + "dir " + Console.rgraphic("help.optional") + "n", "inv", "stats"	
+			};
+			String[] descs = {
+				"draws the map",
+				"moves the player n times in given direction",
+				"displays all items in inventory",
+				"list of your stats"
+			};
 			
-			box(lines);
-		});
-		commandfns.put(arrl("x", "examine", "look", "check", "interact"), (String s, Game g) -> {
-			s = s.trim();
-			char key = s.charAt(0);
+			char corner = Console.rgraphic("help.corner"), borderns = Console.rgraphic("help.borderns");
+			char borderew = Console.rgraphic("help.borderew"), separator = Console.rgraphic("help.separator");
 			
-			for(RoomObject ro : g.currentRoom().objects())
-				if(ro.symbol() == key) {
-					ro.interact(g.currentRoom(), g.player());
-					break;
-				}
-		});
-		commandfns.put(arrl("stats", "c", "character"), (String s, Game g) -> {
-			StatList stats = g.player().stats();
-			box(arrl("Name: " + stats.name(), "hp: " + g.player().hp(), String.format("atk: %d | def: %d | spd: %d", stats.atk(), stats.def(), stats.spd())));
-		});
-		commandfns.put(arrl("gold", "money"), (String s, Game g) -> {
-			box(arrl(String.format("Gold: %dG", g.player().gold()), String.format("Net Worth: %dG", g.player().netWorth())));
-		});
-		commandfns.put(arrl("d", "desc", "describe", "inspect"), (String s, Game g) -> {
-			s = s.trim();
-			if(!g.player().inv().contains(s))
-				log("You are not carring an item called \"%s\"", s);
-			else {
-				Item i = g.player().inv().get(s);
-				StatList stats = i.stats();
-				//log("   >atk %d | def %d | spd %d | rarity %d | value %d", i.stats().atk(), i.stats().def(), i.stats().spd(), i.rarity(), i.value());
-				//log("   >%s", (i.desc().isEmpty() ? parameters.get("Description.Empty") : i.desc()));
-				box(arrl("Name: " + stats.name(), String.format("rarity: %d | value: %d", i.rarity(), i.value()), stats.toString(), "", i.desc()));
+			int maxDescLength = 0, maxNameLength = 0;
+			for(int i = 0; i < cmds.length; i++) {
+				maxNameLength = Math.max(maxNameLength,
+						String.format("%c %s", borderns, cmds[i]).length());
+				maxDescLength = Math.max(maxDescLength, 
+						String.format("%s %c", descs[i], borderns).length());
 			}
-		});
-		commandfns.put(arrl("map", "draw"), (String s, Game g) -> {
-			g.print();
-		});
-		commandfns.put(arrl("clear", "cls"), (String s, Game g) -> {
-			String str = "";
-			for(int i = 0; i < 50; i++)
-				str += "\n";
-			System.out.println(str);
-		});
-	}
-	private static void box(ArrayList<String> lines) {
-		String s = "";
-		
-		for(int i = 0; i < lines.size(); i++) {
-			if(lines.get(i).contains("\n")) {
-				String[] arr = lines.get(i).split("\n");
-				for(int j = 0; j < arr.length; j++)
-					lines.add(i + j + 1, arr[j]);
-				lines.remove(i);
-				i += arr.length;
+			int maxLength = maxDescLength + maxNameLength + 3;	//_:_
+			
+			String title = corner + "Help" + corner;
+			int diff = maxLength - title.length();
+			for(int i = 0 ; i < diff / 2; i++)
+				title = title.substring(0, i + 1) + borderew + title.substring(i + 1);
+			for(int i = title.length() - 1; title.length() < maxLength; i++)
+				title = title.substring(0, i) + borderew + title.substring(i);
+			
+			String bottom = "";
+			for(int i = 0; i < maxLength - 2; i++)
+				bottom += borderew;
+			bottom = corner + bottom + corner;
+			
+			Console.logn(title);
+			for(int i = 0; i < cmds.length; i++) {
+				String format = "%c %-" + (maxNameLength - 2) + "s %c %-" + 
+						(maxDescLength - 2) + "s %c";
+				Console.logn(format, borderns, cmds[i], separator, descs[i], borderns);
 			}
-		}
-		int maxlen = 0;
-		for(String str : lines)
-			if(str.length() > maxlen)
-				maxlen = str.length();
-		String border = "+";
-		for(int i = 0; i < maxlen; i++)
-			border += "-";
-		border += "+";
-		s += border + "\n";
+			Console.logn(bottom);				
+		}));
 		
-		String bbuffer = " ";
-		for(int i = 0; i < + Console.<String>parameter("Input.Start").length() - 1; i++)
-			bbuffer += " ";
-		for(String str : lines) {
-			String mbuffer = "";
-			for(int i = str.length(); i < maxlen; i++)
-				mbuffer += " ";
-			s += bbuffer + "|" + str + mbuffer + "|\n";
-		}
-		log(s + bbuffer + border);
+		getParam("CON.CMD").lock();
+		Console.<ParameterList>getParam("con.setting").lockAdditions();
+		Console.<ParameterList>getParam("con.graphic").lockAdditions();
+		getParam("LANG").lock();
 	}
-	@SuppressWarnings("unchecked")
-	public static<E> E parameter(String id) {
-		return (E)parameters.get(id);
+	
+	private static void log(String s, Object...args) {
+		logr(s, false, args);
 	}
-	public static void putf(String s, Object...args) {
+	private static void logr(String s, boolean recurse, Object...args) {
+		if(!recurse)
+			System.out.print(Console.<String>rsetting("output"));
 		int arg = 0;
-		for(int i = 0; i < s.length(); i++) {
-			char c = s.charAt(i);
-			if(c == '%') {
-				int j = i + 1;
-				while(!("%bcdfs").contains(""+s.charAt(j++)));
-				putf(String.format(s.substring(i, j), args[arg++]));
-				i = j - 1;
-			}
-			else
+		try {
+			for(int i = 0; i < s.length(); i++) {
+				char c = s.charAt(i);
+				if(c == '%') {
+					int end = i + 1;
+					for(; end < s.length() && (" %cdfsb").indexOf(s.charAt(end)) == -1; end++);
+					
+					if(end != s.length())
+						end++;
+					
+					logr(String.format(s.substring(i, end), args[arg++]), true);
+					i = end - 1;
+					continue;
+				}
 				System.out.print(c);
-			try {Thread.sleep(Console.<Integer>parameter("Text.Speed"));}
-			catch(InterruptedException e) {e.printStackTrace();}
+				Thread.sleep(Console.<Integer>rsetting("stutter"));
+			}
+		}
+		catch(InterruptedException e) {
+			System.out.println("Console.log interrupted");
 		}
 	}
-	@SuppressWarnings("unchecked")
-	public static<E extends GameObjectBase> E template(String id) {
-		for(GameObjectBase gob : templates)
-			if(gob.key().equals(id))
-				return (E)	gob;
-		return null;
+	public static void logn(String s, Object...args) {
+		log(s + "\n", args);
 	}
-	public static void log(String s, Object...args) {
-		System.out.print((String)parameters.get("Output.Start"));
-		putf(s + '\n', args);
-	}
-	public static GameFunction command(String key) {
-		for(ArrayList<String> arr : commandfns.keySet())
-			if(arr.contains(key))
-				return commandfns.get(arr);
-		return null;
-	}
-	public static void start(Game g) {
-		command("clear").op("", g);
-		//putf("%41s\n%s\n\n", "M A D E   W I T H", TITLE_CARD);
-		g.print();
-	}
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		init();
-		Game g = new Game();
-		Parser.createGame(g);
 		
-		start(g);
-		
-		Scanner in = new Scanner(System.in);
-		String input = "";
-		while(true) {	//TODO move to Parser
-			if(Console.<String>parameter("World.Draw").equals(Console.<String>parameter("Draw.Always")))
-				g.print();
-			
-			System.out.print((String)parameters.get("Input.Start"));
-			input = in.nextLine();
-			if(input.equals("quit"))
-				break;
-			
-			boolean valid = false;
-			for(ArrayList<String> arr : commandfns.keySet())
-				for(String s : arr)
-					if(s.equals(input.contains(" ") ? input.substring(0, input.indexOf(" ")) : input)) {
-						commandfns.get(arr).op(input.contains(" ") ? input.substring(input.indexOf(" ") + 1) : "", g);
-						valid = true;
-					}
-			if(!valid)
-				log((String)parameters.get("Error.Message"));
-		}
-		in.close();
+		Game g = Parser.createGame();
+		g.run();
 	}
 }

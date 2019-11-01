@@ -1,189 +1,247 @@
 import java.util.*;
 import java.io.*;
 public class Parser {
-	public static final char EOF = '\0';
-	public static final String DELIMETERS = " \t\n{}[]()" + EOF;
-	private int index = 0;
-	private String file;
+	public static final int STRING = 0, DEFINE_DNE = 1, BLOCK = 2, PAREN_MATCH = 3, INVALID_CMD = 4, TLO = 5, PARAM_DNE = 6, FILE_END = 7;
+	public static final int INVALID_TYPE = 8, PARAM_FAIL = 9, PARAM_WARNING = 10;
 	
-	public Parser(String path) {//TODO: change the way file is stored to allow for errors w/ line numbers
-		try {
-			file = "";
-			Scanner s = new Scanner(new File(Console.BASE_FILEPATH + path));
-			while(s.hasNext())
-				file += s.nextLine() + '\n';
-			file += EOF;
-			s.close();
+	private static final char LINE_DELIM = '\n', EOF = '\0', STRING_DELIM = '\"', DEF_DELIM = '%', ELEM_DELIM = ',', ID_DELIM = ':';
+	private static final String PARENTHESES = "[]{}", DELIMETERS = PARENTHESES + LINE_DELIM + DEF_DELIM + ELEM_DELIM + ID_DELIM;
+	private String data, file;
+	private int line = 1, index = 0;
+	
+	public Parser(String file, boolean header) {
+		try {			
+			Scanner in = new Scanner(new File(file));
+			String data = "";
+			while(in.hasNextLine())
+				data += in.nextLine() + LINE_DELIM;
+			data = data.substring(0, data.length() - 1) + EOF;	//remove trailing \n
+			in.close();
+						
+			if(!header) {
+				boolean inString = false;	//remove non-string whitespace
+				for(int i = 0; i < data.length(); i++) {
+					char c = data.charAt(i);
+					if(c == '\"')
+						inString = !inString;
+					if((c == ' ' || c == '\t') && !inString) {
+						data = data.substring(0, i) + data.substring(Math.min(data.length(), i + 1));
+						i--;
+					}
+				}
+			}
+			this.data = data;
+			this.file = file;
 		}
-		catch(IOException e) {e.printStackTrace();}
+		catch(FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
-	public Parser(String s, int start) {	//TODO: start unnecessary but conflicting headers
-		file = s + EOF;
-		index = start;
+	public Parser(String file, String data) {
+		this.file = file;
+		this.data = data;
 	}
-	
-	public boolean hasNext() {
-		return index < file.length();
-	}
-	private boolean isClose(char c) {
-		return c == '}' || c == ']' || c == ')';
-	}
-	private boolean isDelim(char c) {
-		return DELIMETERS.indexOf(c) != -1;
-	}
-	private boolean isOpen(char c) {
-		return c == '{' || c == '[' || c == '(';
-	}
-	private char compliment(char c) {
-		if(c == '{')
-			return '}';
-		if(c == '[')
-			return ']';
-		if(c == '(')
-			return ')';
-		return '\0';
+	public String file() {
+		return file;
 	}
 	public char nextChar() {
-		if(hasNext())
-			return file.charAt(index++);
-		return EOF;
-	}
-	public char nextNonDelim() {
-		char c = nextChar();
-		while(isDelim(c))
-			c = nextChar();
+		if(index > data.length() - 1)
+			err(FILE_END);
+		char c = data.charAt(index++);
+			
+		if(c == LINE_DELIM) {
+			line++;
+			//return nextChar();
+		}
 		return c;
 	}
-	public char nextParentheses() {
+	public char peek() {
+		int i = index, l = line;
 		char c = nextChar();
-		while(!("()[]{}".contains(""+c)))
-			c = nextChar();
+		index = i;
+		line = l;
 		return c;
-	}
-	public <E> Object nextE(E e, Game g) {	//TODO account for definitions
-		if(e instanceof Integer) {
-			String s = next();
-			if(s.startsWith("0b"))
-				return Integer.parseInt(s.substring(2), 2);
-			if(s.charAt(0) == '%') 
-				return g.<GameObjectAttribute<Integer>>definition(s.substring(1)).value();
-			return Integer.parseInt(s);
-		}
-		if(e instanceof String) {
-			if(peek().charAt(0) == '%')
-				return g.<GameObjectAttribute<String>>definition(next().substring(1)).value();
-			return nextString();
-		}
-		if(e instanceof Boolean)
-			return Boolean.parseBoolean(next());
-		if(e instanceof java.lang.Character)
-			return nextNonDelim();
-		return null;
-	}
-	public String peek() {
-		int i = 0;
-		if(hasNext()) {
-			String s = "";
-			char c;
-			while((c = nextChar()) != EOF && !isDelim(c)) {
-				s += c;
-				i++;
-			}
-			if(s.isEmpty())
-				return peek();
-			index--;
-			index -= i;
-			return s;
-		}
-		return null;
 	}
 	public String next() {
-		if(hasNext()) {
-			String s = "";
-			char c;
-			while((c = nextChar()) != EOF && !isDelim(c))
-				s += c;
-			if(s.isEmpty())
-				return next();
-			index--;
-			return s;
+		String s = "";
+		
+		while(hasNext()) {
+			char c = nextChar();
+			if(DELIMETERS.indexOf(c) != -1 || c == ' ')	//for headers only
+				break;
+			s += c;
 		}
-		return "";
+		
+		if(s.isBlank() && hasNext())
+			return next();
+		
+		return s;
+	}
+	public String data() {
+		return data;
+	}
+	public String nextString() {
+		if(peek() == DEF_DELIM) {
+			nextChar(); //eat %
+			return this.<String>checkDef(next());
+		}
+			
+		String s = "";
+		if(nextChar() != STRING_DELIM)	//eat "
+			err(STRING, "start");
+		while(true) {
+			char c = nextChar();
+			if(c == STRING_DELIM)
+				break;
+			s += c;
+		}
+		return s;
+	}
+	public int nextInt() {
+		if(peek() == DEF_DELIM) {
+			nextChar(); //eat %
+			return this.<Integer>checkDef(next().trim());
+		}
+		String n = next().trim();
+		if(n.startsWith(Console.rlang("key.bin")))
+			return Integer.parseInt(n.substring(2), 2);		
+		return Integer.parseInt(n);
+	}
+	public boolean nextBoolean() {
+		if(peek() == DEF_DELIM) {
+			nextChar(); //eat %
+			return this.<Boolean>checkDef(next().trim());
+		}
+		return Boolean.parseBoolean(next().trim());
 	}
 	public String nextBlock() {
-		String s = "";
-		Stack<java.lang.Character> parentheses = new Stack<java.lang.Character>();
+		Stack<java.lang.Character> stack = new Stack<java.lang.Character>();
+		char c = nextChar();
+		if(!isOpen(c))
+			err(BLOCK);
+		stack.push(c);
 		
-		parentheses.push(nextParentheses());
-		while(!parentheses.isEmpty()) {
-			char c = nextChar();
-			s += c;
+		String s = c + "";
+		while(!stack.isEmpty()) {
+			c = nextChar();
 			if(isOpen(c))
-				parentheses.push(c);
+				stack.push(c);
 			else if(isClose(c)) {
-				if(compliment(parentheses.pop()) != c) {
-					System.out.println(s);
-					throw new InputMismatchException("Invalid parentheses");
+				if(c != compliment(stack.pop()))
+					err(PAREN_MATCH);
+			}
+			s += c;
+		}
+		return s;
+	}
+	public void err(int code, Object...args) {
+		String s = String.format("\nError in file %s (line %d):\n", file, line);
+		switch(code) {
+		case FILE_END: throw new Error(s + "end of file.");
+		case INVALID_TYPE: throw new Error(s + "invalid type \'" + args[0] + "\'.");
+		case PARAM_DNE: throw new Error(s + "Parameter \"" + args[0] + "\" does not exist.");
+		case PARAM_FAIL: throw new Error(s + "You can not create new values in path \"" + args[0] + "\".");
+		case PARAM_WARNING:
+			if(Console.echo())
+				System.out.printf("WARNING: Override {%s%s%s} from {%s} to {%s}\n", args[0], args[1], args[2], args[3], args[4]); 
+		break;
+		}
+	}
+	public boolean hasNext() {
+		return index < data.length();
+	}
+	public <E> E checkDef(String path) {
+		Parameter<E> p = Console.<Parameter<E>>getParam("USER." + path);
+		if(p == null)
+			err(DEFINE_DNE);
+		return p.value();
+	}
+	public static Game createGame() {
+		Parser p = new Parser(Console.rlang("Main"), true);
+		Console.parser = p;
+		
+		Game g = new Game();
+		p.readHeader(g);
+		return g;
+	}
+	public void readHeader(Game g) {
+		while(hasNext()) {
+			String cmd = next();
+			if(cmd.equals(Console.rlang("key.read.header"))) {
+				Parser p = new Parser(nextString() + ".dgnh", true);
+				p.readHeader(g);
+			}
+			else if(cmd.equals(Console.rlang("key.read.game"))) {
+				Parser p = new Parser(nextString() + ".dgn", false);
+				p.readGF(g);
+			}
+			else if(cmd.equals(Console.rlang("key.param"))) {
+				String fullPath = next().toUpperCase();
+				String path = fullPath.substring(0, fullPath.lastIndexOf('.'));
+				String name = fullPath.substring(fullPath.lastIndexOf('.') + 1);
+				
+				char type = nextChar();
+				nextChar(); //eat ' '
+				
+				int result = 0;	//-2, -1, 0, 1 = DNE, noNew, success, warning
+				Object value = null;
+				
+				Parameter<Object> old = null;
+				if(Console.validPath(fullPath))
+					old = Console.getParam(fullPath);
+				
+				switch(type) {
+				case 'i':
+					value = nextInt();
+					result = Console.addParam(path, new Parameter<Integer>(name, (Integer)value)); 
+				break;
+				case 's': 
+					value = nextString();
+					result = Console.addParam(path, new Parameter<String>(name, (String)value)); 
+				break;
+				case 'b': 
+					value = nextBoolean();
+					result = Console.addParam(path, new Parameter<Boolean>(name, (Boolean)value)); 
+				break;
+				case 'c': 
+					value = nextChar();
+					result = Console.addParam(path, new Parameter<java.lang.Character>(name, (java.lang.Character)value));
+				break;
+				default: err(INVALID_TYPE, type);
+				}
+				
+				switch(result) {
+				case -2: err(PARAM_DNE, path); break;
+				case -1: err(PARAM_FAIL, path); break;
+				case 1: err(PARAM_WARNING, 
+						path, path.isEmpty() ? "" : ".", name, old, new Parameter<Object>(name, value)); 
+				break;
 				}
 			}
 		}
-		return s.substring(0, s.length() - 1);
 	}
-	public String nextString() {
-		String s = "";
-		char c = nextNonDelim();
-		if(c != '\"')
-			throw new InputMismatchException("String literal must begin with \"");
-		while((c = nextChar()) != EOF && c != '\"')
-			s += c;
-		return s.replaceAll("\\\\n", "\n");
-	}
-	public int nextInt() {	//TODO defines
-		return Integer.parseInt(next());
-	}
-	public boolean nextBool() {
-		return Boolean.parseBoolean(next());
-	}
-	public static void createGame(Game g) {
-		readHeader(Console.MAIN_FILEPATH, g);
-	}
-	public static void readHeader(String fp, Game g) {
-		Parser p = new Parser(fp);
-		
-		while(p.hasNext()) {
-			String cmd = p.next();
-			if(cmd.equals("import"))
-				readHeader(p.nextString() + Console.FILE_TYPE, g);
-			else if(cmd.equals("read"))
-				readFile(p.nextString() + Console.FILE_TYPE, g);
-			else if(cmd.equals("define"))
-				g.addDefinition(p);
-			else if(cmd.equals("symbol")) {
-				String key = p.next();
-				Console.symbols.put(key, p.nextNonDelim());
-			}
-			else if(cmd.equals("param")) {
-				String type = p.next().trim(), key = p.next();
-				
-				if(type.equals(Console.keywords.get("Type.String"))) 
-					Console.parameters.put(key, p.nextString());
-				else if(type.equals(Console.keywords.get("Type.Integer")))
-					Console.parameters.put(key, p.nextInt());
-				else if(type.equals(Console.keywords.get("Type.Boolean")))
-					Console.parameters.put(key, p.nextBool());
+	public void readGF(Game g) {
+		while(hasNext()) {
+			String key = next();
+			switch(key) {
+			case "world": new World(g, Console.<Parameter<GameObject>>getParam("lang.tlo.world").value().create(this)); break;
+			case "player": new Player(g, Console.<Parameter<GameObject>>getParam("lang.tlo.player").value().create(this)); break;
+			default: err(TLO);
 			}
 		}
 	}
-	public static void readFile(String fp, Game g) {
-		Parser p = new Parser(fp);
-		
-		while(p.hasNext()) {
-			String key = p.next();
-			
-			if(key.equals("player"))
-				g.setPlayer(new Player(Console.<GameObject>template("player").create(p, g)));
-			if(key.equals("world"))
-				g.addWorld(new World(Console.<GameObject>template("world").create(p, g)));
-		}
+	
+	private boolean isOpen(char c) {
+		return c == '{' || c == '[';
+	}
+	private boolean isClose(char c) {
+		return c == '}' || c == ']';
+	}
+	private char compliment(char c) {
+		if(isOpen(c))
+			return (c == '{' ? '}' : ']');
+		else if(isClose(c))
+			return (c == '}' ? '{' : '[');
+		return '&';
 	}
 }

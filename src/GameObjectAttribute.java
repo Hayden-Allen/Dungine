@@ -3,21 +3,27 @@ public class GameObjectAttribute<E> extends GameObjectBase {
 	private E value;
 	
 	public GameObjectAttribute(String key, E value) {
-		this.key = key;
+		super(key);
 		this.value = value;
 	}
 	
-	public E value(){
-		return value;
+	public GameObjectAttribute<?> create(Parser p){
+		if(value instanceof String)
+			return new GameObjectAttribute<String>(key, p.nextString());
+		if(value instanceof Integer)
+			return new GameObjectAttribute<Integer>(key, p.nextInt());
+		if(value instanceof java.lang.Character)
+			return new GameObjectAttribute<java.lang.Character>(key, p.nextChar());
+		return null;
 	}
-	@SuppressWarnings("unchecked")
-	public GameObjectAttribute<E> create(Parser p, Game g) {
-		E value = (E)p.<E>nextE(this.value, g);
-		
-		return new GameObjectAttribute<E>(key, value);
+	public E value() {
+		return value;
 	}
 	@Override
 	public String toString() {
-		return key + " " + (value instanceof String ? '\"' : "" ) + value + (value instanceof String ? '\"' : "" );
+		String valueString = value.toString();
+		if(value instanceof String)
+			valueString = "\"" + valueString + "\"";
+		return key + ":" + valueString;
 	}
 }

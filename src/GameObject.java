@@ -1,51 +1,68 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class GameObject extends GameObjectBase {
 	private ArrayList<GameObjectBase> elements;
 	
-	private GameObject(String key, ArrayList<GameObjectBase> elements) {
-		this.key = key;
+	public GameObject(String key, GameObjectBase...elements) {
+		super(key);
+		this.elements = new ArrayList<GameObjectBase>(Arrays.asList(elements));
+	}
+	public GameObject(String key, ArrayList<GameObjectBase> elements) {
+		super(key);
 		this.elements = elements;
 	}
-	public GameObject(String key, GameObjectBase...elements) {
-		this.key = key;
-		this.elements = new ArrayList<GameObjectBase>(Arrays.asList(elements));
+	
+	public GameObject create(Parser p) {
+		Parser p2 = new Parser(p.file(), p.nextBlock());
+		ArrayList<GameObjectBase> temp = new ArrayList<GameObjectBase>(elements);
+		
+		while(p2.hasNext()) {
+			String key = p2.next();
+			if(key.isEmpty())
+				continue;
+			GameObjectBase element = element(key);
+		
+			if(element == null)
+				throw new Error("GameObject \"" + this.key + "\" has no element \"" + key + "\".");
+			
+			temp.remove(element);
+			temp.add(element.create(p2));
+		}
+		return new GameObject(key, temp);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public <E extends GameObjectBase> E element(String key) {
 		for(GameObjectBase gob : elements)
-			if(gob.key().equals(key))
+			if(gob.key.equals(key))
 				return (E)gob;
-		throw new InputMismatchException("GameObject " + key() + " has no element " + key);
+		return null;
+	}
+	public <E> E attribute(String key) {
+		GameObjectAttribute<E> goa = this.<GameObjectAttribute<E>>element(key);
+		if(goa != null)
+			return goa.value();
+		return null;
+	}
+	public <E extends GameObjectBase> GameObjectList<E> list(String key) {
+		return this.<GameObjectList<E>>element(key);
+	}
+	public GameObject object(String key) {
+		return this.<GameObject>element(key);
+	}
+	
+	public void add(GameObjectBase gob) {
+		this.elements.add(gob);
 	}
 	@Override
-	
-	public GameObject create(Parser p, Game g) {
-		Parser p2 = new Parser(p.nextBlock(), 0);
-		
-		Map<String, GameObjectBase> temp = new HashMap<String, GameObjectBase>();
-		for(GameObjectBase gob : elements)
-			temp.put(gob.key(), gob);
-		
-		while(p2.hasNext()) {
-			String key = p2.next();
-			if(key.isEmpty())	//TODO why
-				break;
-			//System.out.println(key);
-			if(!temp.containsKey(key))
-				throw new InputMismatchException("Object \"" + this.key() + "\" has no element \"" + key + "\"");
-			temp.put(key, temp.get(key).create(p2, g));
-			//System.out.println(temp.get(key));
-		}
-		
-		return new GameObject(key, new ArrayList<GameObjectBase>(temp.values()));
-	}	
-	@Override
 	public String toString() {
-		String s = key + "{";
+		String s = key + ":{";
 		for(GameObjectBase gob : elements)
-			s += gob.toString() + " ";
-		return s.substring(0, s.length() - 1) + "}";
+			s += gob.toString() + ","; 
+			
+		if(elements.size() > 0)
+			s = s.substring(0, s.length() - 1);
+		return s + "}";
 	}
 }

@@ -4,10 +4,9 @@ public class Armor extends Item {
 	
 	public Armor(GameObject go) {
 		super(go);
-		floor = go.<GameObjectAttribute<Integer>>element("floor").value();
 	}
-	
-	public String string() {
-		return String.format("armor{%s floor %d}", super.string(), floor);
+	public void fromGameObject(GameObject go) {
+		super.fromGameObject(go);
+		floor = go.attribute("floor");
 	}
 }

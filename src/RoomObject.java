@@ -1,10 +1,19 @@
-import java.util.InputMismatchException;
 
-public abstract class RoomObject implements Createable {
+public abstract class RoomObject extends GameObjectClass {
 	protected char symbol;
 	protected int x, y;
 	
-	public abstract void interact(Room r, Character c);
+	public RoomObject(GameObject go) {
+		super(go);
+	}
+
+	public static RoomObject create(GameObject go) {
+		switch(go.key()) {
+		case "gchest": return new GoldChest(go);
+		case "enemy": return new Enemy(go);
+		}
+		return null;
+	}
 	public char symbol() {
 		return symbol;
 	}
@@ -14,21 +23,10 @@ public abstract class RoomObject implements Createable {
 	public int y() {
 		return y;
 	}
-	public static RoomObject create(GameObject go) {
-		switch(go.key()) {
-		case "gchest":
-			return new GoldChest(go);
-		case "ichest":
-			return new ItemChest(go);
-		}
-		throw new InputMismatchException("Unable to create RoomObject with key \"" + go.key() + "\"");
-	}
-	public String string() {
-		return String.format("symbol %c x %d y %d", symbol, x, y);
-	}
 	public void fromGameObject(GameObject go) {
-		symbol = go.<GameObjectAttribute<java.lang.Character>>element("symbol").value();
-		x = go.<GameObjectAttribute<Integer>>element("x").value();
-		y = go.<GameObjectAttribute<Integer>>element("y").value();
+		symbol = go.<java.lang.Character>attribute("symbol");
+		x = go.<Integer>attribute("x");
+		y = go.<Integer>attribute("y");
 	}
+	public abstract void interact(Room r, Character c);
 }

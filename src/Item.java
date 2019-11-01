@@ -1,47 +1,46 @@
 
-public abstract class Item implements Createable {
-	protected StatList stats;
-	protected int rarity, value;
-	protected String desc;
+public abstract class Item extends GameObjectClass {
+	private StatList stats;
+	private String desc;
+	private int rarity, value;
 	
-	public Item(StatList stats, int rarity, int value, String desc) {
-		this.stats = stats;
-		this.rarity = rarity;
-		this.value = value;
-		this.desc = desc;
-	}
 	public Item(GameObject go) {
-		fromGameObject(go);
+		super(go);
 	}
 	
+	public static Item create(GameObject go) {
+		switch(go.key()) {
+		case "weapon": return new Weapon(go);
+		case "armor": return new Armor(go);
+		case "consumable": return new Consumable(go);
+		}
+		throw new Error("Invalid Item type \"" + go.key() + "\"");
+	}
+	public void fromGameObject(GameObject go) {
+		stats = new StatList(go.object("stats"));
+		desc = go.<String>attribute("desc");
+		rarity = go.<Integer>attribute("rarity");
+		value = go.<Integer>attribute("value");
+	}
+	public String name() {
+		return stats.name();
+	}
+	public String desc() {
+		return desc;
+	}
+	public int atk() {
+		return stats.atk();
+	}
+	public int def() {
+		return stats.def();
+	}
+	public int spd() {
+		return stats.spd();
+	}
 	public int rarity() {
 		return rarity;
 	}
 	public int value() {
 		return value;
-	}
-	public void fromGameObject(GameObject go) {
-		stats = new StatList(go.<GameObject>element("stats"));
-		rarity = go.<GameObjectAttribute<Integer>>element("rarity").value();
-		value = go.<GameObjectAttribute<Integer>>element("value").value();
-		desc = go.<GameObjectAttribute<String>>element("desc").value();
-	}
-	public StatList stats() {
-		return stats;
-	}
-	public String desc() {
-		return desc;
-	}
-	public static Item create(GameObject go) {
-		switch(go.key()) {
-		case "weapon":
-			return new Weapon(go);
-		case "armor":
-			return new Armor(go);
-		}
-		return null;
-	}
-	public String string() {
-		return String.format("%s desc \"%s\" rarity %d value %d", stats.string(), desc, rarity, value);
 	}
 }

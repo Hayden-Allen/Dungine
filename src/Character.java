@@ -1,53 +1,74 @@
 
-public abstract class Character extends RoomObject {
+public abstract class Character extends MovableRoomObject {
 	protected int hp, gold;
 	protected Inventory inv;
 	protected StatList stats;
-	protected Armor armor;
-	protected Weapon weapon;
+	protected Weapon equippedWeapon;
+	protected Armor equippedArmor;
 	
-	protected Armor firstArmor() {
-		for(Item i : inv.items())
-			if(i instanceof Armor)
-				return (Armor)i;
+	public Character(GameObject go) {
+		super(go);
+		equippedWeapon = inv.firstWeapon();
+		equippedArmor = inv.firstArmor();
+	}
+	
+	public boolean isAlive() {
+		return hp > 0;
+	}
+	public boolean attack(Character c) {
+		int damage = atk() - c.def();
+		c.hp -= damage;
+		if(Console.<Boolean>rsetting("hit.print"))
+			Console.logn(Console.rsetting("hit.string"), name(), c.name(), damage);		
+		return c.isAlive();
+	}
+	public static Character create(GameObject go) {
 		return null;
 	}
-	protected Weapon firstWeapon() {
-		for(Item i : inv.items())
-			if(i instanceof Weapon)
-				return (Weapon)i;
-		return null;
-	}
-	public Armor armor() {
-		return armor;
-	}
-	public Weapon weapon() {
-		return weapon;
-	}
-	public int gold() {
-		return gold;
-	}
-	public int netWorth() {	//TODO store?
-		int total = gold;
-		for(Item i : inv.items())
-			total += i.value();
-		return total;
-	}
-	public int hp() {
-		return hp;
+	public void fromGameObject(GameObject go) {
+		super.fromGameObject(go.object("visual"));	//send to RoomObject
+		inv = new Inventory(go.object("inventory"));
+		stats = new StatList(go.object("stats"));
+		hp = go.attribute("hp");
+		gold = go.attribute("gold");
 	}
 	public Inventory inv() {
 		return inv;
 	}
-	public StatList stats() {
-		return stats;
+	public int hp() {
+		return hp;
+	}
+	public int gold() {
+		return gold;
+	}
+	public int atk() {
+		int bonus = 0;
+		if(equippedWeapon != null)
+			bonus += equippedWeapon.atk();
+		if(equippedArmor != null)
+			bonus += equippedArmor.atk();
+		return stats.atk() + bonus;
+	}
+	public int def() {
+		int bonus = 0;
+		if(equippedWeapon != null)
+			bonus += equippedWeapon.def();
+		if(equippedArmor != null)
+			bonus += equippedArmor.def();
+		return stats.def() + bonus;
+	}
+	public int spd() {
+		int bonus = 0;
+		if(equippedWeapon != null)
+			bonus += equippedWeapon.spd();
+		if(equippedArmor != null)
+			bonus += equippedArmor.spd();
+		return stats.spd() + bonus;
+	}
+	public String name() {
+		return stats.name();
 	}
 	public void addGold(int x) {
-		gold += x;
-	}
-	
-	public void fromGameObject(GameObject go) {
-		super.fromGameObject(go.<GameObject>element("visual"));
-		inv = new Inventory(go.<GameObject>element("inventory"));
+		this.gold += x;
 	}
 }
