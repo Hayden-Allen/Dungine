@@ -7,7 +7,7 @@ The Dungine language (hereafter just "Dungine") is a tool for quickly and easily
 ### Files
 There are two types of Dungine files, each with different syntax: headers (**.dgnh**) and game files (**.dgn**).  
 Header files follow a simple **command** *args* syntax, while game files are more similar to JSON.  
-The entry point for any Dungine game is **main.dgnh**.  
+The entry point for every game is **main.dgnh**.  
 All files must be in a folder called **LocalFiles** that is in the same directory as the .jar file.
 
 ### Header Files
