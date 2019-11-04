@@ -360,12 +360,11 @@ Elements that require no further explantation are not listed here. Explanations 
 
 ### The Registry
 The registry is a large tree structure that the Dungine API uses to store most of the data used throughout the program. Examples include the String that is printed to prompt the player for input (defaults to "<< ") or the object template for a **consumable**.
-Not all of this data is accessible from Dungine, but the stuff that matters is. Because of this, registry access is the most powerful aspect of Dungine, as it allows the user to directly manipulate data that is used by the API.  
-Besides this, the user can store their own data in the registry to simplify programming.
+Not all of this data is accessible from Dungine, but the stuff that matters is. Because of this, registry access is the most powerful aspect of Dungine, as it allows the user to directly manipulate data that is used by the API. Besides this, the user can store their own data in the registry to simplify programming.
 
 ##### Structure
 The registry root has 3 children: **lang**, which stores all of the Dungine language data, **con**, which stores various data about the console, namely graphics, and **user**, which is empty by default.  
-The user has restricted access to **con** (you are allowed to alter settings and graphics) and unrestricted access to **user** (you are allowed to alter and create values). The **con** directory is massive and has far too many values and subdirectories to list right now, but in future I may do so.  
+The user has restricted access to **con** (you are allowed to alter settings and graphics) and unrestricted access to **user** (you are allowed to alter and create values). The **con** directory is massive and has far too many values and subdirectories to list right now, but in future I will do so.  
 Currently, there is no way for you to create subdirectories under **user**, but this is a planned addition. However, you can create as many values of primitive types as you want.
 
 ##### Manipulation
@@ -393,7 +392,7 @@ Examples:
 
 ##### Addition
 You cannot add data to **con**, but **user** has no restrictions. To add a new value, the same syntax is used:
-+ To add the value "Player 1" under the key **playername** in **user**: ```param user.playername s "Player 1"```
++ To add the value "Player 1" under the key **playername** to **user**: ```param user.playername s "Player 1"```
 
 In order to use data from **user** in your game files, use the % character followed by the registry path relative to **user** of the value you want to use. For example, to use the **playername** value defined earlier:
 ```
