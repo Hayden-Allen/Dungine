@@ -50,10 +50,10 @@ Every Dungine object is made up of 3 distinct types: *attributes*, *lists*, and 
    + the most basic data type, being only a key and a primitive value (int, String, boolean, char)
 + *Lists* 
    + store a variable amount of 1 of the 3 data types
-   + there are currently no lists in Dungine that store *attributes*
+   + there are currently no *lists* in Dungine that store *attributes*
 + *Objects*
    + the most complex data type, storing a set number of all 3 types
-   + during interpretation, if a definition for a particular element is not provided, the created object will instead have the *default* value for that element. We will talk more about this later
+   + during interpretation, if a definition for a particular element is not provided, the created object will instead have the *default* value for that element. We will talk more about this [later](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#tlo-trees "TLO Trees")
 ##### Syntax
 There are basic syntax rules for each type:  
 + each consists of a key (case-sensitive String with no whitespace)
