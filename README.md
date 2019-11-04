@@ -170,6 +170,7 @@ All possible values that a list may contain are shown, but the default is an emp
 Let's start from the bottom and build our way up.  
 For brevity, I will use **character** to mean either **player** or **enemy**, **item** to mean either **weapon**, **armor**, or **consumable**, and **room object** to mean **enemies** and **gold chests**.
 
+**stats**
 + **name**
    + String name of a **character** or **item**
 + **atk**
@@ -185,7 +186,8 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
 + **stats**
    + contain **name**, **atk**, **def**, and **spd**
    + used for **items** and **characters**
-   
+
+**items**
 + **desc**
    + String description of an **item**
 + **value**
@@ -243,7 +245,8 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
    + single character used to display an object
    + for **room objects** this will be displayed in the room at the given **x** and **y** coordinates
    + for **player**s, this will always be displayed in the center of the room that they are currently in
-   
+
+**player**
 + **maxhp**
    + maximum number of hitpoints that a **character** has
 + **gold**
