@@ -107,8 +107,6 @@ Let's do a line-by-line of this **player** definition:
 + ```hp: 5, gold: 100```
    + this **player** has a base health of 5 and starts with 100 gold pieces
    + the name of the currency in-game can be customized through the registry, but you can't change the name of the Dungine attribute
-   
-While this example doesn't show any lists, I'm sure you can imagine their syntax. Regardless, I will show a more in-depth example later on that will include lists.
 
 ##### Top Level Objects
 The main restriction on Dungine game file syntax is the fact that only certain types of objects may be defined outside of any other object. These are called top level objects, or TLOs. There are currently just 2 TLOs in Dungine, **player** and **world**.  
@@ -359,3 +357,18 @@ Elements that require no further explantation are not listed here. Explanations 
    
 **rooms**
    + contains a variable number of **row**s
+
+### The Registry
+The registry is a large tree structure that the Dungine API uses to store most of the data used throughout the program. Examples include the String that is printed to prompt the player for input (defaults to "<< ") or the object template for a **consumable**.
+Not all of this data is accessible from Dungine, but the stuff that matters is. Because of this, registry access is the most powerful aspect of Dungine, as it allows the user to directly manipulate data that is used by the API.  
+Besides this, the user can store their own data in the registry to simplify programming.
+
+##### Structure
+The registry root has 3 children: **lang**, which stores all of the Dungine language data, **con**, which stores various data about the console, namely graphics, and **user**, which is empty by default.  
+The user has restricted access to **con** (you are allowed to alter settings and graphics) and unrestricted access to **user** (you are allowed to alter and create values). The **con** directory is massive and has far too many values and subdirectories to list right now, but in future I may do so.  
+Currently, there is no way for you to create subdirectories under **user**, but this is a planned addition. However, you can create as many values of primitive types as you want.
+
+##### Manipulation
+As discussed [earlier](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#commands "Header File Commands"), manipulation of registry data is done in header files using the **param** command.
+
+The first argument passed to **param** is the path of the value you wish to change. As mentioned above, there are far too many values in **con** for me to list right now, but some useful ones include: **setting**.**echo**/**stutter**/**input**/**output**/**maponmove** (whether or not to display warning messages during interpretation, millisecond delay between printed characters, String printed before player input, String printed before output, whether or not to draw the map after the player moves) and **graphic**.**room**.**wall**.**corner**/**ns**/**ew** (corner and vertical/horizontal wall characters for rooms).
