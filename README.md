@@ -15,7 +15,7 @@ All files must be in a folder called **LocalFiles** that is in the same director
  + **read** "*path*"
    + interprets a game file
    + *path* is the filepath relative to LocalFiles, excluding file extensions
-   + For example, to read the file *Worlds/World 1.dgn*, the command is __read__ "*Worlds/World 1*"
+   + For example, to read the file *LocalFiles/Worlds/World 1.dgn*, the command is __read__ "*Worlds/World 1*"
  + **import** "*path*"
    + similar to **read**, but instead interprets another header file
    + *path* follows the same rules as above
