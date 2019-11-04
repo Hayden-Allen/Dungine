@@ -45,9 +45,9 @@ Line-by-line:
 
 ### Game Files
 ##### Basics
-Every Dungine object is made up of 3 distinct types: *attributes*, *lists*, and other *objects*:  
+Every Dungine object is made up of 3 distinct types: *attributes*, *lists*, and other *objects*. Here is some info about each. 
 + *Attributes*
-   + the most basic data type, being only a key and a primitive value (integer, String, boolean, char)
+   + the most basic data type, being only a key and a primitive value (int, String, boolean, char)
 + *Lists* 
    + store a variable amount of a 1 of the 3 data types
    + there are currently no lists in Dungine that store *attributes*
