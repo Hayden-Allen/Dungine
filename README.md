@@ -220,7 +220,7 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
 + **consumable**
    + has **stats**, **rarity**, **value**, **hp**, **duration**, and **self**
    + not equippable
-   + *not implemented yet*
+   + *exists, but doesn't do anything yet*
    
 **inventory**  
 + **size**
