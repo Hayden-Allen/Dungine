@@ -183,9 +183,6 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
 + **spd**
    + speed stat used to determine the turn order in a fight
    + similar to **atk** and **def** in that a **character**'s equipped **item**'s values are added to its own
-+ **stats**
-   + contain **name**, **atk**, **def**, and **spd**
-   + used for **items** and **characters**
 
 **items**
 + **desc**
