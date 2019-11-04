@@ -90,7 +90,7 @@ This might be a bit too compact, but it is easy to see how making syntactical de
 
 That being said, let's do a line-by-line of this **player** definition:  
 + ```player {```
-   + opens the object definition
+   + opens a **player** object
    + once again, this only works because **player** is a TLO
    + most objects must be defined inside other objects
 + ```visual {```
