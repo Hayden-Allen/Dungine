@@ -200,7 +200,7 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
    + it is important to realize that this is the *magnitude* of the max negative damage
    + positive values will result in the wearer being healed if a small enough amount of damage is done
    + zero will result in no healing
-   + negative valueswill result in the wearer always being damaged, even if the attacker's **atk** is less than the wearer's **def**
+   + negative values will result in the wearer always being damaged, even if the attacker's **atk** is less than the wearer's **def**
 + **hp**
    + number of hitpoints
    + for **character**s this is the current amount of hit points they have
