@@ -11,7 +11,7 @@ The entry point for any Dungine game is __main.dgnh__.
 All files must be in a folder called __LocalFiles__ that is in the same directory as the .jar file.
 
 ### Header Files
-##### Header Commands
+##### Commands
  + __read__ "*path*"
    + interprets a game file
    + *path* is the filepath relative to LocalFiles, excluding file extensions
@@ -24,7 +24,7 @@ All files must be in a folder called __LocalFiles__ that is in the same director
    + allows you to set many different parameters for your game, as well as store custom data
    + this is complicated, and we will cover it in more detail later
 
-##### Header Example
+##### Example
 ```
 param con.setting.echo b false
 import "definitions"
@@ -32,3 +32,6 @@ read "Worlds/World 1"
 read "Worlds/World 2"
 read "Player"
 ```
+Line-by-line:
+```param con.setting.echo b false```
+Set the registry *param*eter at *con.setting.echo* to the *b*oolean value of *false*
