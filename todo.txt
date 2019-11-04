@@ -1,4 +1,0 @@
-commands
-custom error system w/ line #s
-clean up constructors (remove unnecessary)
-better title graphic
