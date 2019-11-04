@@ -88,7 +88,7 @@ player{visual{x:1,y:0,symbol:$},stats{name:"Player 1",atk:5,def:5,spd:5},hp:5,go
 ```
 This might be a bit too compact, but it is easy to see how making syntactical decisions to fit your preferences allow you to format your Dungine code in many ways while providing the same end result.
 
-That being said, let's do a line-by-line of this **player** definition:  
+Let's do a line-by-line of this **player** definition:  
 + ```player {```
    + opens a **player** object
    + this only works because **player** is a [TLO](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#top-level-objects "Top Level Objects")
@@ -168,7 +168,7 @@ All possible values that a list may contain are shown, but the default is an emp
             + **self** : *false*
 
 Let's start from the bottom and build our way up.  
-For brevity, I will use **character** to mean either **player** or **enemy**, **item** to mean either **weapon**, **armor**, or **consumable**, and **room object** to mean **enemies** and **gold chests**
+For brevity, I will use **character** to mean either **player** or **enemy**, **item** to mean either **weapon**, **armor**, or **consumable**, and **room object** to mean **enemies** and **gold chests**.
 
 + **name**
    + String name of a **character** or **item**
