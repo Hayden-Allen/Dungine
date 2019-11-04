@@ -101,7 +101,7 @@ Let's do a line-by-line of this **player** definition:
    + opens a **stat** object, which stores generic information and is used in many different kinds of objects
 + ```name: "Player 1", atk: 5, def: 5, spd: 5```
    + this **player**'s name is "Player 1". Note the use of quotations to delimit the String and the ability to include whitespace
-   + this **player** has base attack, defense, and speed stats of 5. We'll talk about what these mean in detail later
+   + this **player** has base attack, defense, and speed stats of 5. We'll talk about what these mean in detail [later](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#tlo-tree-breakdown "TLO Tree Breakdown")
 + ```}```
    + close **stat** object
 + ```hp: 5, gold: 100```
@@ -111,7 +111,7 @@ Let's do a line-by-line of this **player** definition:
 While this example doesn't show any lists, I'm sure you can imagine their syntax. Regardless, I will show a more in-depth example later on that will include lists.
 
 ##### Top Level Objects
-The main restriction on Dungine game file syntax is the fact that only certain types of objects may be defined outside of any other object. These are called Top Level Objects, or TLOs. There are currently just 2 TLOs in Dungine, **player** and **world**.  
+The main restriction on Dungine game file syntax is the fact that only certain types of objects may be defined outside of any other object. These are called top level objects, or TLOs. There are currently just 2 TLOs in Dungine, **player** and **world**.  
 
 ##### TLO Trees
 Here are the object trees for **player** and **world**.  
@@ -133,7 +133,7 @@ All possible values that a list may contain are shown, but the default is an emp
       + **symbol** : *X*
    + **inventory**
       + **size** : *5*
-      + **items**
+      + **items** : *[]*
          + **weapon**
             + **stats**
                + **name** : *NONAME*
