@@ -221,7 +221,8 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
 + **consumable**
    + has **stats**, **rarity**, **value**, **hp**, **duration**, and **self**
    + not equippable
-   + *not implemented yet*  
+   + *not implemented yet*
+   
 **inventory**  
 + **size**
    + number of **item**s that an **inventory** can store
@@ -229,7 +230,8 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
    + list containing a variable amount of **weapon**s, **armor**s and **consumable**s
 + **inventory**
    + has a **size** and **items**
-   + the size of **items** must be less than or equal to **size**  
+   + the size of **items** must be less than or equal to **size**
+   
 **visual**  
 + **x**
    + for **enemies** and other **room objects** this represents the x coordinate within a room that an object is located
