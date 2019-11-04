@@ -166,3 +166,85 @@ All possible values that a list may contain are shown, but the default is an emp
             + **duration** : *1*
             + **hp** : *0*
             + **self** : *false*
+
+Let's start from the bottom and build our way up.  
+For brevity, I will use **character** to mean either **player** or **enemy**, **item** to mean either **weapon**, **armor**, or **consumable**, and **room object** to mean **enemies** and **gold chests**
+
++ **name**
+   + String name of a **character** or **item**
++ **atk**
+   + attack stat used in damage calculations
+   + a **character**'s equipped **item**'s values are added to their own during those calculations
+   + so if a **player** has an **atk** of 10 and their equipped **weapon** has an **atk** of 2 and their equipped **armor** has an **atk** of 1, the resulting **atk** used for calculation is 10 + 2 + 1 = 13.
++ **def**
+   + defense stat used in damage calculations
+   + same properties as **atk**
++ **spd**
+   + speed stat used to determine the turn order in a fight
+   + similar to **atk** and **def** in that a **character**'s equipped **item**'s values are added to its own
++ **stats**
+   + contain **name**, **atk**, **def**, and **spd**
+   + used for **items** and **characters**
+   
++ **desc**
+   + String description of an **item**
++ **value**
+   + the monetary value of an **item**
+   + used in calculating a **character**'s net worth
++ **rarity**
+   + number representing how rare an **item** is
+   + intended for use in determining both **value** and price at shops (*not implemented yet*)
++ **floor**
+   + maximum amount of negative damage that a **character** with this **armor** equipped can receive
+   + if an **enemy** has 2 atk and a **player** has 10 def, then the resulting calculation is 2 - 10 = -8 damage
+   + if that **player**'s armor has a **floor** of 3, then that -8 damage turns into -3 damage for a result of +3 hp to the **player**
+   + it is important to realize that this is the *magnitude* of the max negative damage
+   + positive values will result in the wearer being healed if a small enough amount of damage is done
+   + zero will result in no healing
+   + negative will result in the wearer always being damaged, even if the attacker's atk is less than the wearer's def
++ **hp**
+   + number of hitpoints
+   + for **character**s this is the current amount of hit points they have
+   + for **consumable**s this is the number of hit points they restore to the target
++ **duration**
+   + number of turns that a **consumable**'s effects last for
+   + *not implemented yet*
++ **self**
+   + whether or not a **consumable** targets the user
+   + *not implemented yet*
++ **weapon**
+   + has **stats**, **rarity**, **value** and **desc**
+   + **character**s can equip one at a time
++ **armor**
+   + has **stats**, **rarity**, **value**, **desc**, and **floor**
+   + **character**s can equip one at a time
++ **consumable**
+   + has **stats**, **rarity**, **value**, **hp**, **duration**, and **self**
+   + not equippable
+   + *not implemented yet*
+   
++ **size**
+   + number of **item**s that an **inventory** can store
++ **items**
+   + list containing a variable amount of **weapon**s, **armor**s and **consumable**s
++ **inventory**
+   + has a **size** and **items**
+   + the size of **items** must be less than or equal to **size**
+   
++ **x**
+   + for **enemies** and other **room objects** this represents the x coordinate within a room that an object is located
+   + for **player**s this is the world x coordinate of the room that the **player** is in
++ **y**
+   + for **room objects** this represents the y coordinate within a room that an object is located
+   + for **player**s this is the world y coordinate of the room that the **player** is in
++ **symbol**
+   + single character used to display an object
+   + for **room objects** this will be displayed in the room at the given **x** and **y** coordinates
+   + for **player**s, this will always be displayed in the center of the room that they are currently in
+   
++ **maxhp**
+   + maximum number of hitpoints that a **character** has
++ **gold**
+   + amount of money a **character** has
++ **player**
+   + has **stats**, **visual**, **hp**, **maxhp**, **gold**, and **inventory**
