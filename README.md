@@ -112,7 +112,12 @@ That being said, let's do a line-by-line of this **player** definition:
 While this example doesn't show any lists, I'm sure you can imagine their syntax. Regardless, I will show a more in-depth example later on that will include lists.
 
 ##### Top Level Objects
-The main restriction on Dungine game file syntax is the fact that only certain types of objects may be defined outside of any other object. These are called Top Level Objects, or TLOs.  
-There are currently just 2 TLOs in Dungine, **player** and **world**.  
+The main restriction on Dungine game file syntax is the fact that only certain types of objects may be defined outside of any other object. These are called Top Level Objects, or TLOs. There are currently just 2 TLOs in Dungine, **player** and **world**.  
+
 ##### TLO Trees
-Here are the object trees for **player** and **world**.
+Here are the object trees for **player** and **world**.  
+Keys are in **bold** and default values are *italicized*.
+
++ **player**
+   + **stats**
+      + **name** : *NONAME*
