@@ -29,9 +29,14 @@ All files must be in a folder called __LocalFiles__ that is in the same director
 param con.setting.echo b false
 import "definitions"
 read "Worlds/World 1"
-read "Worlds/World 2"
 read "Player"
 ```
 Line-by-line:  
- + ```param con.setting.echo b false```  
+ +```param con.setting.echo b false```  
  Set the registry **param**eter at **con.setting.echo** to the **b**oolean value of **false**
+ +```import "definitions"```
+ Interprets the header file with filepath LocalFiles/**definitions**.dgnh
+ +```read "Worlds/World 1"```
+ Interprets the game file with filepath LocalFiles/**Worlds/World 1**.dgn
+ +```read "Player"```
+ Interprets the game file with filepath LocalFiles/**Player**.dgn
