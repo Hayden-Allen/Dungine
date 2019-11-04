@@ -134,7 +134,7 @@ All possible values that a list may contain are shown, but the default is an emp
       + **symbol** : *X*
    + **inventory**
       + **size** : *5*
-      + **items** : *[]*
+      + **items** : *\[ ]*
          + **weapon**
             + **stats**
                + **name** : *NONAME*
@@ -254,14 +254,14 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
 ##### World TLO Tree
 + **world**
    + **name** : *NONAME*
-   + **rooms** : *[]*
-      + **row** : *[]*
+   + **rooms** : *\[ ]*
+      + **row** : *\[ ]*
          + **room**
             + **doors** : *0*
             + **text**
                + **onenter** : ** (empty)
                + **onexit** : ** (empty)
-            + **objects** : *[]*
+            + **objects** : *\[ ]*
                + **gchest**
                   + **gold** : *0*
                   + **visual**
