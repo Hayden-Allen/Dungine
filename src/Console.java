@@ -284,22 +284,22 @@ public class Console {
 		addParam("lang.template.object", p("inventory", go("inventory", rgoa("size"), rgol("items"))));
 		
 		//characters
+		addParam("lang.template.attribute", p("maxhp", goa("maxhp", 5)));
 		addParam("lang.template.attribute", p("dcgold", goa("dcgold", 0)));
 		addParam("lang.template.attribute", p("dcarmor", goa("dcarmor", 0)));
 		addParam("lang.template.attribute", p("dcweapon", goa("dcweapon", 0)));
-		addParam("lang.template.object", p("enemy", go("enemy", rgoa("hp"), rgoa("gold"), rgo("visual"), 
+		addParam("lang.template.object", p("enemy", go("enemy", rgoa("hp"), rgoa("maxhp"), rgoa("gold"), rgo("visual"), 
 					rgoa("dcgold"), rgoa("dcarmor"), rgoa("dcweapon"), rgo("inventory"), rgo("stats"))));
 		
 		//room.objects
 		addParam("lang.template.list", p("objects", gol("objects", rgo("gchest"), rgo("enemy"))));
 		
 		//room
-		addParam("lang.template.attribute", p("hidden", goa("hidden", false)));
 		addParam("lang.template.attribute", p("doors", goa("doors", 0)));
 		addParam("lang.template.attribute", p("onenter", goa("onenter", "")));
 		addParam("lang.template.attribute", p("onexit", goa("onexit", "")));
 		addParam("lang.template.object", p("text", go("text", rgoa("onenter"), rgoa("onexit"))));
-		addParam("lang.template.object", p("room", go("room", rgo("text"), rgoa("doors"), rgoa("hidden"), rgol("objects"))));
+		addParam("lang.template.object", p("room", go("room", rgo("text"), rgoa("doors"), rgol("objects"))));
 		
 		//world
 		addParam("lang.template.list", p("row", gol("row", rgo("room"))));
@@ -307,7 +307,7 @@ public class Console {
 		
 		addParam("LANG", pl("TLO"));
 		addParam("lang.tlo", p("world", go("world", rgoa("name"), rgol("rooms"))));
-		addParam("lang.tlo", p("player", go("player", rgoa("hp"), rgoa("gold"), rgo("visual"), rgo("stats"), rgo("inventory"))));
+		addParam("lang.tlo", p("player", go("player", rgoa("hp"), rgoa("maxhp"), rgoa("gold"), rgo("visual"), rgo("stats"), rgo("inventory"))));
 
 		
 		

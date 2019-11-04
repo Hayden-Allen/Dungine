@@ -6,7 +6,6 @@ public class Room extends GameObjectClass {	//contains doors and a list of RoomO
 	public static final int UP = 0b1000, LEFT = 0b0100, DOWN = 0b0010, RIGHT = 0b0001;
 	private ArrayList<RoomObject> objects;	//list of all objects
 	private int doors;	//door states
-	private boolean hidden;	//TODO
 	private int wx, wy;	//world coordinates of this Room
 	private String onEnter, onExit;	//to be printed on entry and exit
 	
@@ -30,12 +29,8 @@ public class Room extends GameObjectClass {	//contains doors and a list of RoomO
 	public boolean door(int d) {	//whether or not the given door is open
 		return (doors & d) > 0;
 	}
-	public boolean hidden() {
-		return hidden;
-	}
 	public void fromGameObject(GameObject go) {
 		doors = go.<Integer>attribute("doors");
-		hidden = go.<Boolean>attribute("hidden");
 		
 		GameObject text = go.object("text");
 		onEnter = text.attribute("onenter");

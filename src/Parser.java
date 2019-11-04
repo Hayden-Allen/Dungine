@@ -154,6 +154,7 @@ public class Parser {	//reads game data from files to create a Game
 		//RoomObject coordinates are invalid
 		case RO_OUT_OF_BOUNDS_X: throw new Error(s + "x coordinate " + args[0] + " is out of bounds for [0, 3].");
 		case RO_OUT_OF_BOUNDS_Y: throw new Error(s = "y coordinate " + args[0] + " is ut of bounds for [0, 1].");
+		case TLO: throw new Error(s + args[0] + " is not a top level object.");
 		}
 	}
 	public boolean hasNext() {	//whether or not there is more data in the file
@@ -177,13 +178,13 @@ public class Parser {	//reads game data from files to create a Game
 		while(hasNext()) {
 			String cmd = next();
 			if(cmd.equals(Console.rlang("key.read.header"))) {	//another header file
-				Parser p = new Parser(nextString() + ".dgnh", true);	//new Parser for new header
+				Parser p = new Parser("LocalFiles/" + nextString() + ".dgnh", true);	//new Parser for new header
 				Console.parser = p;
 				p.readHeader(g);	//pass same Game
 				Console.parser = this;
 			}
 			else if(cmd.equals(Console.rlang("key.read.game"))) {	//game file
-				Parser p = new Parser(nextString() + ".dgn", false);	//new Parser for game file
+				Parser p = new Parser("LocalFiles/" + nextString() + ".dgn", false);	//new Parser for game file
 				Console.parser = p;
 				p.readGF(g);
 				Console.parser = this;
@@ -236,12 +237,14 @@ public class Parser {	//reads game data from files to create a Game
 	}
 	public void readGF(Game g) {	//read game file (.dgn)
 		while(hasNext()) {
-			String key = next();
+			String key = next().trim();
+			if(key.isEmpty())	//happens at end of file
+				break;
 			//only two top left objects currently implemented
 			switch(key) {
 			case "world": new World(g, Console.<Parameter<GameObject>>getParam("lang.tlo.world").value().create(this)); break;
 			case "player": new Player(g, Console.<Parameter<GameObject>>getParam("lang.tlo.player").value().create(this)); break;
-			default: err(TLO);
+			default: err(TLO, key);
 			}
 		}
 	}

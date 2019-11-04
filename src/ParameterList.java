@@ -64,7 +64,7 @@ public class ParameterList extends ParameterBase {	//stores a list of Parameters
 		if(pl == null)
 			throw new Error(String.format("Parameter %s has no element %s", fp, cur));
 		if(write && pl.readOnly()) {
-			System.out.printf("WARNING: Cannot edit %s%s; it is read only\n", fp, fp.equals(cur) ? "" : "." + cur);
+			System.out.printf("WARNING: Cannot edit %s; it is read only\n", fullPath);
 			return null;
 		}
 		return pl.followPath(end + 1 > path.length() ? "" : path.substring(end + 1), fullPath, write);

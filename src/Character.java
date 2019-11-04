@@ -3,7 +3,7 @@
 //have health, gold, Inventory, and StatList
 
 public abstract class Character extends MovableRoomObject {
-	private int hp, gold;	//health an currency
+	private int hp, maxhp, gold;	//health, max health, and currency
 	private Inventory inv;	//list of Items
 	private StatList stats;	//name, atk, def, and spd
 	//currently equipped Items
@@ -67,9 +67,11 @@ public abstract class Character extends MovableRoomObject {
 		//damage done to c by this Character
 		//if c.def() is greater than atk(), this will be negative
 		//negative values, which end up healing c, are bounded by c's equippedArmor's floor value
-		int damage = Math.max(atk() - c.def(), c.equippedArmor.floor());
+		int damage = Math.max(atk() - c.def(), -c.equippedArmor.floor());
 		
 		c.hp -= damage;	//do damage to c
+		c.hp = Math.min(c.maxhp, c.hp);	//clamp to max health
+		
 		if(Console.<Boolean>rsetting("hit.print"))	//whether or not to print when damage is done
 			//format String for hit statement. Can contain up to 3 tokens, but they will always be passed in this order
 			Console.logn(Console.rsetting("hit.string"), name(), c.name(), damage);	
@@ -81,8 +83,9 @@ public abstract class Character extends MovableRoomObject {
 		inv = new Inventory(go.object("inventory"));	//create Inventory from GameObject
 		stats = new StatList(go.object("stats"));	//create StatList from GameObject
 		//get hp and gold attributes
-		hp = go.attribute("hp");
 		gold = go.attribute("gold");
+		maxhp = go.attribute("maxhp");
+		hp = Math.min(go.attribute("hp"), maxhp);
 	}
 	public Inventory inv() {
 		return inv;
