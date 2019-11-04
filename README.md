@@ -233,7 +233,7 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
    
 **visual**  
 + **x**
-   + for **enemies** and other **room objects** this represents the x coordinate within a room that an object is located
+   + for **room objects** this represents the x coordinate within a room that an object is located
    + for **player**s this is the world x coordinate of the room that the **player** is in
 + **y**
    + for **room objects** this represents the y coordinate within a room that an object is located
