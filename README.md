@@ -91,7 +91,7 @@ This might be a bit too compact, but it is easy to see how making syntactical de
 That being said, let's do a line-by-line of this **player** definition:  
 + ```player {```
    + opens a **player** object
-   + this only works because **player** is a TLO
+   + this only works because **player** is a [TLO]("https://github.com/Hayden-Allen/Dungine/blob/master/README.md#top-level-objects" Top Level Objects)
 + ```visual {```
    + opens a **visual** object. This object works a bit differently for **player**s than other objects, which we'll talk about later
 + ```x: 1, y: 0, symbol: $```
