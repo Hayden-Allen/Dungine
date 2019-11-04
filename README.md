@@ -107,7 +107,7 @@ That being said, let's do a line-by-line of this **player** definition:
    + close **stat** object
 + ```hp: 5, gold: 100```
    + this **player** has a base health of 5 and starts with 100 gold pieces
-   + the name of the currency in-game can be customized through the registry, though the Dungine attribute is always called **gold**
+   + the name of the currency in-game can be customized through the registry, but you can't change the name of the Dungine attribute
    
 While this example doesn't show any lists, I'm sure you can imagine their syntax. Regardless, I will show a more in-depth example later on that will include lists.
 
