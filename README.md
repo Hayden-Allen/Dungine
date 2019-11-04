@@ -56,11 +56,11 @@ Every Dungine object is made up of 3 distinct types: *attributes*, *lists*, and 
    + during interpretation, if a definition for a particular element is not provided, the created object will instead have the *default* value for that element. We will talk more about this later
 ##### Syntax
 There are basic syntax rules for each type:  
-+ each consists of a key (case sensitive String with no whitespace)
-+ keys and values may be separated by a **:**. For *attributes* this is mandatory
++ each consists of a key (case-sensitive String with no whitespace)
++ keys and values may be separated by a **:** (colon). For *attributes* this is mandatory
 + *objects* and *lists* may start and end with either **{}** or **[]**
-   + by convention, I use **{}** to denote objects and **[]** for lists
-+ data types may be separated by a **,**
+   + by convention, I use **{}** for objects and **[]** for lists
++ data types may be separated by a **,** (comma)
 
 The most important thing to realize about game file syntax is that **all non-String whitespace is removed before interpretation**. This means that, if you want your Dungine code to be compact, you must use **,** and **:** wherever you can.
 
