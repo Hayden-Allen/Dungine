@@ -58,8 +58,7 @@ Every Dungine object is made up of 3 distinct types: *attributes*, *lists*, and 
 There are basic syntax rules for each type:  
 + each consists of a key (case-sensitive String with no whitespace)
 + keys and values may be separated by a **:** (colon). For *attributes* this is mandatory
-+ *objects* and *lists* may start and end with either **{}** or **[]**
-   + by convention, I use **{}** for objects and **[]** for lists
++ *objects* and *lists* must start and end with either **{}** or **[]**. By convention, I use **{}** for *objects* and **[]** for *lists*
 + data types may be separated by a **,** (comma)
 
 The most important thing to realize about game file syntax is that **all non-String whitespace is removed before interpretation**. This means that, if you want your Dungine code to be compact, you must use **,** and **:** wherever you can.
@@ -82,18 +81,18 @@ player {
  gold: 100
 }
 ```  
-This takes up more space than it needs because it doesn't use commas to separate values. Let's write it more compactly.
+This takes up more space than it needs to because it doesn't use commas to separate values. Let's write it more compactly.
 ```
 player{visual{x:1,y:0,symbol:$},stats{name:"Player 1",atk:5,def:5,spd:5},hp:5,gold:100}
 ```
-This might be a bit too compact, but it is easy to see how making syntactical decisions to fit your preferences allow you to format your Dungine code in many ways while providing the same end result.
+This might be a bit too compact, but it is easy to see how making syntactical decisions to fit your preferences allows you to format your Dungine code in many ways while providing the same end result.
 
 Let's do a line-by-line of this **player** definition:  
 + ```player {```
    + opens a **player** object
    + this only works because **player** is a [TLO](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#top-level-objects "Top Level Objects")
 + ```visual {```
-   + opens a **visual** object. This object works a bit differently for **player**s than other objects, which we'll talk about later
+   + opens a **visual** object. This object works a bit differently for **player**s than other objects, which we'll talk about [later](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#tlo-tree-breakdown, "TLO Tree Breakdown")
 + ```x: 1, y: 0, symbol: $```
    + this **player** starts at the 2nd room in the 1st row of the world, and is displayed with the '$' character
 + ```}```
@@ -167,6 +166,7 @@ All possible values that a list may contain are shown, but the default is an emp
             + **hp** : *0*
             + **self** : *false*
 
+#### TLO Tree Breakdown
 Let's start from the bottom and build our way up.  
 For brevity, I will use **character** to mean either **player** or **enemy**, **item** to mean either **weapon**, **armor**, or **consumable**, and **room object** to mean **enemies** and **gold chests**.
 
