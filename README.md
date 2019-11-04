@@ -116,8 +116,53 @@ The main restriction on Dungine game file syntax is the fact that only certain t
 
 ##### TLO Trees
 Here are the object trees for **player** and **world**.  
-Keys are in **bold** and default values are *italicized*.
+Keys are in **bold** and default values are *italicized*.  
+All possible values that a list may contain are shown, but the default is an empty list.
 
 + **player**
+   + **hp** : *0*
+   + **maxhp**: *5*
+   + **gold** : *0*
    + **stats**
       + **name** : *NONAME*
+      + **atk** : *0*
+      + **def** : *0*
+      + **spd** : *0*
+   + **visual**
+      + **x** : *0*
+      + **y** : *0*
+      + **symbol** : *X*
+   + **inventory**
+      + **size** : *5*
+      + **items**
+         + **weapon**
+            + **stats**
+               + **name** : *NONAME*
+               + **atk** : *0*
+               + **def** : *0*
+               + **spd** : *0*
+            + **desc** : *NODESC*
+            + **rarity** : *0*
+            + **value** : *0*
+         + **armor**
+            + **stats**
+               + **name** : *NONAME*
+               + **atk** : *0*
+               + **def** : *0*
+               + **spd** : *0*
+            + **desc** : *NODESC*
+            + **rarity** : *0*
+            + **value** : *0*
+            + **floor** : *0*
+         + **consumable**
+            + **stats**
+               + **name** : *NONAME*
+               + **atk** : *0*
+               + **def** : *0*
+               + **spd** : *0*
+            + **desc** : *NODESC*
+            + **rarity** : *0*
+            + **value** : *0*
+            + **duration** : *1*
+            + **hp** : *0*
+            + **self** : *false*
