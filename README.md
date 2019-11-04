@@ -201,11 +201,11 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
    + it is important to realize that this is the *magnitude* of the max negative damage
    + positive values will result in the wearer being healed if a small enough amount of damage is done
    + zero will result in no healing
-   + negative will result in the wearer always being damaged, even if the attacker's **atk** is less than the wearer's **def**
+   + negative valueswill result in the wearer always being damaged, even if the attacker's **atk** is less than the wearer's **def**
 + **hp**
    + number of hitpoints
    + for **character**s this is the current amount of hit points they have
-   + for **consumable**s this is the number of hit points they restore to the target
+   + for **consumable**s this is the number of hit points they restore to the target (*not implemented yet*)
 + **duration**
    + number of turns that a **consumable**'s effects last for
    + *not implemented yet*
@@ -222,9 +222,7 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
    + has **stats**, **rarity**, **value**, **hp**, **duration**, and **self**
    + not equippable
    + *not implemented yet*
-   
-   
-   
+**inventory**  
 + **size**
    + number of **item**s that an **inventory** can store
 + **items**
@@ -232,7 +230,7 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
 + **inventory**
    + has a **size** and **items**
    + the size of **items** must be less than or equal to **size**
-   
+**visual**  
 + **x**
    + for **enemies** and other **room objects** this represents the x coordinate within a room that an object is located
    + for **player**s this is the world x coordinate of the room that the **player** is in
