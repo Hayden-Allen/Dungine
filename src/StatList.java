@@ -1,6 +1,6 @@
 
-public class StatList extends GameObjectClass {
-	private int atk, def, spd;
+public class StatList extends GameObjectClass {	//stores basic information
+	private int atk, def, spd;	//attack, defense, and speed stats
 	private String name;
 	public StatList(GameObject go) {
 		super(go);

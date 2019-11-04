@@ -1,10 +1,10 @@
 
 public abstract class ParameterBase {
-	protected String key;
-	protected boolean readOnly;
+	private String key;	//identifier
+	private boolean readOnly;	//whether or not this can be modified
 	
 	public ParameterBase(String key) {
-		this.key = key.toUpperCase();
+		this.key = key.toUpperCase();	//automatically normalize naming convention
 		this.readOnly = false;
 	}
 	

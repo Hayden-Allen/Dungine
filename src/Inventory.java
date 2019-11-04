@@ -1,121 +1,58 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class Inventory extends GameObjectClass {
+public class Inventory extends GameObjectClass {	//stores a list of Items
 	private ArrayList<Item> items;
-	private int maxSize;
-	
-	private String title, bottom;
-	private static final String rowFormat = "%c %c %s %c%s%c %d%c %s%c %d%c %s%c %d%c %c";
-	private int rowLength;
+	private int maxSize;	//maximum number of items this Inventory can hold
 	
 	public Inventory(GameObject go) {
-		super(go);
+		super(go);	//send to GameObjectClass
 	}
 	
-	public int value() {
+	public boolean isFull() {	//whether or not carrying capacity is reached
+		return items.size() == maxSize;
+	}
+	public int value() {	//gold value of all Items
 		int total = 0;
 		for(Item i : items)
 			total += i.value();
 		return total;
 	}
-	public Weapon firstWeapon() {
+	public Weapon firstWeapon() {	//Weapon with lowest index
 		for(Item i : items)
 			if(i instanceof Weapon)
 				return (Weapon)i;
 		return null;
 	}
-	public Armor firstArmor() {
+	public Armor firstArmor() {	//Armor with lowest index
 		for(Item i : items)
 			if(i instanceof Armor)
 				return (Armor)i;
 		return null;
 	}
-	private void format() {
-		char borderew = Console.rgraphic("inventory.border.ew");
-		char corner = Console.rgraphic("inventory.corner");
+	public String title() {	//formatted String for title of box
 		char open = Console.rgraphic("inventory.title.parentheses.open"), close = Console.rgraphic("inventory.title.parentheses.close");
 		char divide = Console.rgraphic("inventory.title.divide");
-		char placeholder = 'A';	//single character placeholder for formatting
-		String atk = Console.rgraphics("inventory.stat.atk"), def = Console.rgraphics("inventory.stat.def");
-		String spd = Console.rgraphics("inventory.stat.spd");
 		
-		int maxNameLength = 0;
-		for(Item i : items) {
-			String row = String.format(rowFormat,
-					placeholder, placeholder, i.name(), placeholder, 
-					atk, placeholder, i.atk(), placeholder, 
-					def, placeholder, i.def(), placeholder, 
-					spd, placeholder, i.spd(), placeholder, placeholder);
-			maxNameLength = Math.max(row.length(), maxNameLength);
-		}
-		
-		int minTitleLength = String.format(placeholder + "Inventory" + placeholder + placeholder + "%d" + placeholder + "%d" + placeholder + placeholder, items.size(), maxSize).length();
-		rowLength = Math.max(maxNameLength, minTitleLength);
-		
-		int titleDelta = rowLength - minTitleLength;
-		title = corner + "";
-		for(int i = 0; i < titleDelta / 2; i++)
-			title += borderew;
-		title += String.format("Inventory%c%c%d%c%d%c", borderew, open, items.size(), divide, maxSize, close);
-		for(int i = title.length(); i < rowLength - 1; i++)
-			title += borderew;
-		title += corner;
-		
-		bottom = corner + "";
-		for(int i = 0; i < rowLength - 2; i++)
-			bottom += borderew;
-		bottom += corner;	
-	}
-	public void print() {
-		Console.logn(title);
-		for(Item i : items)
-			printItem(i);
-		Console.logn(bottom);
-	}
-	private void printItem(Item i) {
-		char borderns = Console.rgraphic("inventory.border.ns"), bullet = 0;
-		char statOpen = Console.rgraphic("inventory.stat.open"), statClose = Console.rgraphic("inventory.stat.close");
-		char statSeparator = Console.rgraphic("inventory.stat.separator.name"), valueSeparator = Console.rgraphic("inventory.stat.separator.value");
-		String atk = Console.rgraphics("inventory.stat.atk"), def = Console.rgraphics("inventory.stat.def");
-		String spd = Console.rgraphics("inventory.stat.spd");
-		
-		if(i instanceof Armor)
-			bullet = Console.rgraphic("inventory.bullet.armor");
-		else if(i instanceof Weapon)
-			bullet = Console.rgraphic("inventory.bullet.weapon");
-		else if(i instanceof Consumable)
-			bullet = Console.rgraphic("inventory.bullet.consumable");
-		
-		String s = String.format(rowFormat,
-				borderns, bullet, i.name(), statOpen, 
-				atk, valueSeparator, i.atk(), statSeparator, 
-				def, valueSeparator, i.def(), statSeparator, 
-				spd, valueSeparator, i.spd(), statClose, borderns);
-		while(s.length() < rowLength)
-			s = s.substring(0, 4 + i.name().length()) + ' ' + s.substring(4 + i.name().length());
-		Console.logn(s);
+		//"Inventory [size/maxSize]"
+		return String.format("%s %c%d%c%d%c", "Inventory", open, items.size(), divide, maxSize, close);
 	}
 	public ArrayList<Item> items(){
 		return items;
 	}
-	public void add(Item i) {
-		if(items.size() + 1 <= maxSize) {
+	public void add(Item i) {	//if possible add i to list
+		if(items.size() + 1 <= maxSize)
 			items.add(i);
-			format();
-		}
 	}
-	public void remove(String name) {
+	public void remove(String name) {	//remove Item with given name
 		items.remove(get(name));
-		format();
 	}
-	public Item get(String name) {
+	public Item get(String name) {	//get Item with given name
 		for(Item i : items)
-			if(i.name().equals(name))
+			if(i.name().equalsIgnoreCase(name))
 				return i;
 		return null;
 	}
-	public boolean contains(String name) {
+	public boolean contains(String name) {	//whether or not list contains Item with given name
 		return get(name) != null;
 	}
 	public int maxSize() {
@@ -125,9 +62,15 @@ public class Inventory extends GameObjectClass {
 		maxSize = go.attribute("size");
 		items = new ArrayList<Item>();
 		
-		for(GameObject item : go.<GameObject>list("items").elements())
-			items.add(Item.create(item));
+		//list of GameObjects representing Items
+		GameObjectList<GameObject> itemTemplates = go.<GameObject>list("items");
 		
-		format();
+		//if length of template list exceeds maxSize, throw error
+		if(itemTemplates.elements().size() > maxSize)
+			Console.parser.err(Parser.INV_OVERFLOW, itemTemplates.elements().size(), maxSize);
+		
+		//otherwise create Items from each template and add to list
+		for(GameObject item : itemTemplates.elements())
+			items.add(Item.create(item));
 	}
 }

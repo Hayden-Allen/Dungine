@@ -1,13 +1,14 @@
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class Room extends GameObjectClass {
+public class Room extends GameObjectClass {	//contains doors and a list of RoomObjects
+	//constants representing values for open doors. All doors open is 0b1111
 	public static final int UP = 0b1000, LEFT = 0b0100, DOWN = 0b0010, RIGHT = 0b0001;
-	private ArrayList<RoomObject> objects;
-	private int doors;
+	private ArrayList<RoomObject> objects;	//list of all objects
+	private int doors;	//door states
 	private boolean hidden;	//TODO
-	private int wx, wy;
-	private String onEnter, onExit;
+	private int wx, wy;	//world coordinates of this Room
+	private String onEnter, onExit;	//to be printed on entry and exit
 	
 	public Room(GameObject go, int wx, int wy) {
 		super(go);
@@ -15,7 +16,18 @@ public class Room extends GameObjectClass {
 		this.wy = wy;
 	}
 	
-	public boolean door(int d) {
+	public RoomObject object(char id, int n) {	//nth occurrence of object with given name 
+		int found = 0;
+		for(RoomObject ro : objects) {
+			if((ro.symbol() + "").equalsIgnoreCase(id + "")) {
+				found++;
+				if(found == n)
+					return ro;
+			}
+		}
+		return null;
+	}
+	public boolean door(int d) {	//whether or not the given door is open
 		return (doors & d) > 0;
 	}
 	public boolean hidden() {
@@ -24,6 +36,7 @@ public class Room extends GameObjectClass {
 	public void fromGameObject(GameObject go) {
 		doors = go.<Integer>attribute("doors");
 		hidden = go.<Boolean>attribute("hidden");
+		
 		GameObject text = go.object("text");
 		onEnter = text.attribute("onenter");
 		onExit = text.attribute("onexit");
@@ -46,7 +59,7 @@ public class Room extends GameObjectClass {
 	public void removeObject(RoomObject ro) {
 		objects.remove(ro);
 	}
-	public String[] objectGraphics() {
+	public String[] objectGraphics() {	//formatted String array containing symbols of all objects at correct positions
 		char[][] grid = new char[2][4];
 		for(RoomObject ro : objects)
 			grid[ro.y()][ro.x()] = ro.symbol();
@@ -61,7 +74,7 @@ public class Room extends GameObjectClass {
 	}
 	
 	public void onEnter(Player p, Game g) {
-		if(!onEnter.isEmpty())
+		if(!onEnter.isEmpty())	//if something to print, print it
 			Console.logn(onEnter);
 		
 		ArrayList<Enemy> enemies = new ArrayList<Enemy>();
@@ -69,9 +82,10 @@ public class Room extends GameObjectClass {
 			if(ro instanceof Enemy)
 				enemies.add((Enemy)ro);
 		
-		if(!enemies.isEmpty())
-			enemies = (new Encounter(p, enemies)).run(g);
+		if(!enemies.isEmpty())	//if Enemies present, start an Encounter
+			enemies = (new Encounter(p, enemies)).run(g);	//assign array to result of fight
 		
+		//remove all enemies defeated in the Encounter
 		Iterator<RoomObject> ros = objects.iterator();
 		while(ros.hasNext()) {
 			RoomObject cur = ros.next();
@@ -80,7 +94,7 @@ public class Room extends GameObjectClass {
 		}
 	}
 	public void onExit(Player p) {
-		if(!onExit.isEmpty())
+		if(!onExit.isEmpty())	//if something to print, print it
 			Console.logn(onExit);
 	}
 }
