@@ -259,8 +259,8 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
          + **room**
             + **doors** : *0*
             + **text**
-               + **onenter** : ** (empty)
-               + **onexit** : ** (empty)
+               + **onenter** : (empty)
+               + **onexit** : (empty)
             + **objects** : *\[ ]*
                + **gchest**
                   + **gold** : *0*
