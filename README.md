@@ -248,7 +248,7 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
 
 **player**
 + **maxhp**
-   + maximum number of hitpoints that a **character** has
+   + maximum number of hitpoints that a **character** can have
 + **gold**
    + amount of money a **character** has
 + **player**
