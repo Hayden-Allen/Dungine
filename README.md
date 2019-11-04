@@ -381,7 +381,7 @@ The second argument is a character representing the data type:
 
 The third argument is the value. Depending on the data type there are certain restrictions:
 + **b**: must be either ```true``` or ```false```
-+ **c**: can be a string of non-whitespace characters of any length, but only the first will be use
++ **c**: can be a string of non-whitespace characters of any length, but only the first will be used
 + **i**: must be an integer value in the range \[-2,147,483,648, 2,147,483,647]
 + **s**: must begin and end with "
 
@@ -390,3 +390,17 @@ Examples:
 + To make the corners of all rooms an asterisk: ```param con.graphic.room.wall.corner c *```
 + To remove the delay between printed characters: ```param con.setting.stutter i 0```
 + To make the input prompt "< ": ```param con.setting.input s "< "```
+
+##### Addition
+You cannot add data to **con**, but **user** has no restrictions. To add a new value, the same syntax is used:
++ To add the value "Player 1" under the key **playername** in **user**: ```param user.playername s "Player 1"```
+
+In order to use data from **user** in your game files, use the % character followed by the registry path relative to **user** of the value you want to use. For example, to use the **playername** value defined earlier:
+```
+player {
+ stats {
+  name: %playername,
+  atk: 5
+  ...
+```
+
