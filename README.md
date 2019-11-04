@@ -92,7 +92,6 @@ That being said, let's do a line-by-line of this **player** definition:
 + ```player {```
    + opens a **player** object
    + once again, this only works because **player** is a TLO
-   + most objects must be defined inside other objects
 + ```visual {```
    + opens a **visual** object. This object works a bit differently for **player**s than other objects, which we'll talk about later
 + ```x: 1, y: 0, symbol: $```
