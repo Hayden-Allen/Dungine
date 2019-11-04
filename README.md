@@ -92,7 +92,7 @@ Let's do a line-by-line of this **player** definition:
    + opens a **player** object
    + this only works because **player** is a [TLO](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#top-level-objects "Top Level Objects")
 + ```visual {```
-   + opens a **visual** object. This object works a bit differently for **player**s than other objects, which we'll talk about [later](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#tlo-tree-breakdown "TLO Tree Breakdown")
+   + opens a **visual** object. This object works a bit differently for **player**s than for other objects, which we'll talk about [later](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#tlo-tree-breakdown "TLO Tree Breakdown")
 + ```x: 1, y: 0, symbol: $```
    + this **player** starts at the 2nd room in the 1st row of the world, and is displayed with the '$' character
 + ```}```
