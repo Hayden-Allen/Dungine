@@ -385,6 +385,7 @@ The third argument is the value. Depending on the data type there are certain re
 + **i**: must be an integer value in the range \[-2,147,483,648, 2,147,483,647]
 + **s**: must begin and end with "
 
+Examples:
 + To make the console draw the map after every movement: ```param con.setting.maponmove b true```
 + To make the corners of all rooms an asterisk: ```param con.graphic.room.wall.corner c *```
 + To remove the delay between printed characters: ```param con.setting.stutter i 0```
