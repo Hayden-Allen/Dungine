@@ -356,5 +356,6 @@ Elements that require no further explantation are not listed here. Explanations 
 
 **row**
    + contains a variable number of **room**s
+   
 **rooms**
    + contains a variable number of **row**s
