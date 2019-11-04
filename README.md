@@ -41,3 +41,9 @@ Line-by-line:
  Interprets the game file with filepath LocalFiles/**Worlds/World 1**.dgn
  + ```read "Player"```  
  Interprets the game file with filepath LocalFiles/**Player**.dgn
+
+
+### Game Files
+##### Top Level Objects
+The main restriction on Dungine game file syntax is the fact that only certain types of objects may be defined outside of any other object. These are called Top Level Objects, or TLOs.  
+There are currently just 2 TLOs in Dungine, **player** and **world**.
