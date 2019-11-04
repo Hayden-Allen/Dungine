@@ -202,7 +202,7 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
    + zero will result in no healing
    + negative values will result in the wearer always being damaged, even if the attacker's **atk** is less than the wearer's **def**
 + **hp**
-   + number of hitpoints
+   + number of hit points
    + for **character**s this is the current amount of hit points they have
    + for **consumable**s this is the number of hit points they restore to the target (*not implemented yet*)
 + **duration**
@@ -245,7 +245,7 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
 
 **player**
 + **maxhp**
-   + maximum number of hitpoints that a **character** can have
+   + maximum number of hit points that a **character** can have
 + **gold**
    + amount of money a **character** has
 + **player**
