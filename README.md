@@ -32,6 +32,6 @@ read "Worlds/World 1"
 read "Worlds/World 2"
 read "Player"
 ```
-Line-by-line:
-```param con.setting.echo b false```  
-Set the registry __param__eter at __con.setting.echo__ to the __b__oolean value of __false__
+Line-by-line:  
+ + ```param con.setting.echo b false```  
+ Set the registry __param__eter at __con.setting.echo__ to the __b__oolean value of __false__
