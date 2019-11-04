@@ -375,9 +375,17 @@ The first argument passed to **param** is the path of the value you wish to chan
 
 The second argument is a character representing the data type:  
 + **b** for **b**oolean
++ **c** for **c**har
 + **i** for **i**nteger
 + **s** for **s**tring
-+ **c** for **c**har
+
+The third argument is the value. Depending on the data type there are certain restrictions:
++ **b**: must be either ```true``` or ```false```
++ **c**: can be a string of non-whitespace characters of any length, but only the first will be use
++ **i**: must be an integer value in the range \[-2,147,483,648, 2,147,483,647]
++ **s**: must begin and end with "
 
 To make the console draw the map after every movement: ```param con.setting.maponmove b true```
-And to make the corners of all rooms an asterisk: ```param con.graphic.room.wall.corner c *```
+To make the corners of all rooms an asterisk: ```param con.graphic.room.wall.corner c *```
+To remove the delay between printed characters: ```param con.setting.stutter i 0```
+To make the input prompt "< ": ```param con.setting.input s "< "```
