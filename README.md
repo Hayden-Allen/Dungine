@@ -33,7 +33,8 @@ read "Player"
 ```
 Line-by-line:  
  + ```param con.setting.echo b false```  
- Set the registry **param**eter at **con.setting.echo** to the **b**oolean value of **false**
+ Set the registry **param**eter at **con.setting.echo** to the **b**oolean value of **false**  
+ This particular command prevents the API from displaying warning messages when registry values are overwritten
  + ```import "definitions"```  
  Interprets the header file with filepath LocalFiles/**definitions**.dgnh
  + ```read "Worlds/World 1"```  
