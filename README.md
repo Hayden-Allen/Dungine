@@ -286,7 +286,7 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
                      + **spd** : *0*
                   + **inventory**
                      + **size** : *5*
-                     + **items** : *[]*
+                     + **items** : *\[ ]*
                         + **weapon**
                            + **stats**
                               + **name** : *NONAME*
