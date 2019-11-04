@@ -12,14 +12,14 @@ All files must be in a folder called **LocalFiles** that is in the same director
 
 ### Header Files
 ##### Commands
- + ```**read** "*path*"```
+ +```read "path"```
    + interprets a game file
    + *path* is the filepath relative to LocalFiles, excluding file extensions
    + For example, to read the file *LocalFiles/Worlds/World 1.dgn*, the command is ```read "Worlds/World 1"```
- + **import** "*path*"
+ +```import "path"```
    + similar to **read**, but instead interprets another header file
    + *path* follows the same rules as above
- + **param** "*path*" *type value*
+ +```parm "path" type value```
    + creates or overwrites a value in the game's registry
    + allows you to set many different parameters for your game, as well as store custom data
    + this is complicated, and we will cover it in more detail later
