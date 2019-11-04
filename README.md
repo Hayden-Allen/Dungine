@@ -168,7 +168,7 @@ All possible values that a list may contain are shown, but the default is an emp
             + **self** : *false*
 
 #### Player TLO Tree Breakdown
-For brevity, I will use **character** to mean either **player** or **enemy**, **item** to mean either **weapon**, **armor**, or **consumable**, and **room object** to mean **enemies** and **gold chests**.
+For brevity, I will use **character** to mean either **player** or **enemy**, **item** to mean either **weapon**, **armor**, or **consumable**, and **room object** to mean **enemies** and **gold chests** (shown in-depth [here](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#world-tlo-tree-breakdown "World TLO Tree Breakdown")).
 
 **stats**
 + **name**
