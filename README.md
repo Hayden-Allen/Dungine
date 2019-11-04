@@ -34,4 +34,4 @@ read "Player"
 ```
 Line-by-line:  
  + ```param con.setting.echo b false```  
- Set the registry __param__eter at __con.setting.echo__ to the __b__oolean value of __false__
+ Set the registry **param**eter at **con.setting.echo** to the **b**oolean value of **false**
