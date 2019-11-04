@@ -61,7 +61,7 @@ There are basic syntax rules for each type:
 + *objects* and *lists* must start and end with either **{}** or **[]**. By convention, I use **{}** for *objects* and **[]** for *lists*
 + data types may be separated by a **,** (comma)
 
-The most important thing to realize about game file syntax is that **all non-String whitespace is removed before interpretation**. This means that, if you want your Dungine code to be compact, you must use **,** and **:** wherever you can.
+The most important thing to realize about game file syntax is that **all non-String whitespace (tabs and spaces) is removed before interpretation**. This means that, if you want your Dungine code to be compact, you must use **,** and **:** wherever you can.
 
 ##### Object Example
 ```
