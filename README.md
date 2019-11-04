@@ -19,7 +19,7 @@ All files must be in a folder called **LocalFiles** that is in the same director
  + ```import "path"```
    + similar to **read**, but instead interprets another header file
    + *path* follows the same rules as above
- + ```parm "path" type value```
+ + ```param "path" type value```
    + creates or overwrites a value in the game's registry
    + allows you to set many different parameters for your game, as well as store custom data
    + this is complicated, and we will cover it in more detail later
@@ -34,9 +34,9 @@ read "Player"
 Line-by-line:  
  + ```param con.setting.echo b false```  
  Set the registry **param**eter at **con.setting.echo** to the **b**oolean value of **false**
- + ```import "definitions"```
+ + ```import "definitions"```  
  Interprets the header file with filepath LocalFiles/**definitions**.dgnh
- + ```read "Worlds/World 1"```
+ + ```read "Worlds/World 1"```  
  Interprets the game file with filepath LocalFiles/**Worlds/World 1**.dgn
- + ```read "Player"```
+ + ```read "Player"```  
  Interprets the game file with filepath LocalFiles/**Player**.dgn
