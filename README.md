@@ -252,72 +252,71 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
    + has **stats**, **visual**, **hp**, **maxhp**, **gold**, and **inventory**
 
 ##### World TLO Tree
-+ **world**
-   + **name** : *NONAME*
-   + **rooms** : *\[ ]*
-      + **row** : *\[ ]*
-         + **room**
-            + **doors** : *0*
-            + **text**
-               + **onenter** : (empty)
-               + **onexit** : (empty)
-            + **objects** : *\[ ]*
-               + **gchest**
-                  + **gold** : *0*
-                  + **visual**
-                     + **x** : *0*
-                     + **y** : *0*
-                     + **symbol** : *X*
-               + **enemy**
-                  + **hp** : *0*
-                  + **maxhp** : *5*
-                  + **gold** : *0*
-                  + **dcgold** : *0*
-                  + **dcarmor** : *0*
-                  + **dcweapon** : *0*
-                  + **visual**
-                     + **x** : *0*
-                     + **y** : *0*
-                     + **symbol** : *X*
-                  + **stats**
-                     + **name** : *NONAME*
-                     + **atk** : *0*
-                     + **def** : *0*
-                     + **spd** : *0*
-                  + **inventory**
-                     + **size** : *5*
-                     + **items** : *\[ ]*
-                        + **weapon**
-                           + **stats**
-                              + **name** : *NONAME*
-                              + **atk** : *0*
-                              + **def** : *0*
-                              + **spd** : *0*
-                           + **desc** : *NODESC*
-                           + **rarity** : *0*
-                           + **value** : *0*
-                        + **armor**
-                           + **stats**
-                              + **name** : *NONAME*
-                              + **atk** : *0*
-                              + **def** : *0*
-                              + **spd** : *0*
-                           + **desc** : *NODESC*
-                           + **rarity** : *0*
-                           + **value** : *0*
-                           + **floor** : *0*
-                        + **consumable**
-                           + **stats**
-                              + **name** : *NONAME*
-                              + **atk** : *0*
-                              + **def** : *0*
-                              + **spd** : *0*
-                           + **desc** : *NODESC*
-                           + **rarity** : *0*
-                           + **value** : *0*
-                           + **duration** : *1*
-                           + **hp** : *0*
-                           + **self** : *false*
++ **name** : *NONAME*
++ **rooms** : *\[ ]*
+   + **row** : *\[ ]*
+      + **room**
+         + **doors** : *0*
+         + **text**
+            + **onenter** : (empty)
+            + **onexit** : (empty)
+         + **objects** : *\[ ]*
+            + **gchest**
+               + **gold** : *0*
+               + **visual**
+                  + **x** : *0*
+                  + **y** : *0*
+                  + **symbol** : *X*
+            + **enemy**
+               + **hp** : *0*
+               + **maxhp** : *5*
+               + **gold** : *0*
+               + **dcgold** : *0*
+               + **dcarmor** : *0*
+               + **dcweapon** : *0*
+               + **visual**
+                  + **x** : *0*
+                  + **y** : *0*
+                  + **symbol** : *X*
+               + **stats**
+                  + **name** : *NONAME*
+                  + **atk** : *0*
+                  + **def** : *0*
+                  + **spd** : *0*
+               + **inventory**
+                  + **size** : *5*
+                  + **items** : *\[ ]*
+                     + **weapon**
+                        + **stats**
+                           + **name** : *NONAME*
+                           + **atk** : *0*
+                           + **def** : *0*
+                           + **spd** : *0*
+                        + **desc** : *NODESC*
+                        + **rarity** : *0*
+                        + **value** : *0*
+                     + **armor**
+                        + **stats**
+                           + **name** : *NONAME*
+                           + **atk** : *0*
+                           + **def** : *0*
+                           + **spd** : *0*
+                        + **desc** : *NODESC*
+                        + **rarity** : *0*
+                        + **value** : *0*
+                        + **floor** : *0*
+                     + **consumable**
+                        + **stats**
+                           + **name** : *NONAME*
+                           + **atk** : *0*
+                           + **def** : *0*
+                           + **spd** : *0*
+                        + **desc** : *NODESC*
+                        + **rarity** : *0*
+                        + **value** : *0*
+                        + **duration** : *1*
+                        + **hp** : *0*
+                        + **self** : *false*
             
 ##### World TLO Tree Breakdown
 Elements that require no further explantation are not listed here. Explanations of **gold**, **stats**, **hp**, **maxhp**, **inventory**, **visual** can be found [above](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#player-tlo-tree-breakdown "Player TLO Tree Breakdown").
