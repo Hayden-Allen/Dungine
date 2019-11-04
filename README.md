@@ -10,4 +10,9 @@ All files must be in a folder called __LocalFiles__ that is in the same director
 
 ### Header Commands
  + __read__ "*path*"
-   + test
+   + interprets a game file
+   + *path* is the filepath relative to LocalFiles, excluding file extensions
+   + For example, to read the file *Worlds/World 1.dgn*, the command is __read__ "*Worlds/World 1"
+ + __import__ "*path"
+  + similar to __read__, but instead interprets another header file
+  + *path* follows the same rules as above
