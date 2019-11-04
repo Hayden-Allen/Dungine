@@ -92,7 +92,7 @@ Let's do a line-by-line of this **player** definition:
    + opens a **player** object
    + this only works because **player** is a [TLO](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#top-level-objects "Top Level Objects")
 + ```visual {```
-   + opens a **visual** object. This object works a bit differently for **player**s than for other objects, which we'll talk about [later](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#tlo-tree-breakdown "TLO Tree Breakdown")
+   + opens a **visual** object. This object works a bit differently for **player**s than for other objects, which we'll talk about [later](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#player-tlo-tree-breakdown "Player TLO Tree Breakdown")
 + ```x: 1, y: 0, symbol: $```
    + this **player** starts at the 2nd room in the 1st row of the world, and is displayed with the '$' character
 + ```}```
@@ -101,7 +101,7 @@ Let's do a line-by-line of this **player** definition:
    + opens a **stat** object, which stores generic information and is used in many different kinds of objects
 + ```name: "Player 1", atk: 5, def: 5, spd: 5```
    + this **player**'s name is "Player 1". Note the use of quotations to delimit the String and the ability to include whitespace
-   + this **player** has base attack, defense, and speed stats of 5. We'll talk about what these mean in detail [later](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#tlo-tree-breakdown "TLO Tree Breakdown")
+   + this **player** has base attack, defense, and speed stats of 5. We'll talk about what these mean in detail [later](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#player-tlo-tree-breakdown "Player TLO Tree Breakdown")
 + ```}```
    + close **stat** object
 + ```hp: 5, gold: 100```
@@ -118,6 +118,7 @@ Here are the object trees for **player** and **world**.
 Keys are in **bold** and default values are *italicized*.  
 All possible values that a list may contain are shown, but the default is an empty list.
 
+##### Player TLO Tree
 + **player**
    + **hp** : *0*
    + **maxhp**: *5*
@@ -166,8 +167,7 @@ All possible values that a list may contain are shown, but the default is an emp
             + **hp** : *0*
             + **self** : *false*
 
-#### TLO Tree Breakdown
-Let's start from the bottom and build our way up.  
+#### Player TLO Tree Breakdown
 For brevity, I will use **character** to mean either **player** or **enemy**, **item** to mean either **weapon**, **armor**, or **consumable**, and **room object** to mean **enemies** and **gold chests**.
 
 **stats**
@@ -250,3 +250,113 @@ For brevity, I will use **character** to mean either **player** or **enemy**, **
    + amount of money a **character** has
 + **player**
    + has **stats**, **visual**, **hp**, **maxhp**, **gold**, and **inventory**
+
+##### World TLO Tree
++ **world**
+   + **name** : *NONAME*
+   + **rooms** : *[]*
+      + **row** : *[]*
+         + **room**
+            + **doors** : *0*
+            + **text**
+               + **onenter** : ** (empty)
+               + **onexit** : ** (empty)
+            + **objects** : *[]*
+               + **gchest**
+                  + **gold** : *0*
+                  + **visual**
+                     + **x** : *0*
+                     + **y** : *0*
+                     + **symbol** : *X*
+               + **enemy**
+                  + **hp** : *0*
+                  + **maxhp** : *5*
+                  + **gold** : *0*
+                  + **dcgold** : *0*
+                  + **dcarmor** : *0*
+                  + **dcweapon** : *0*
+                  + **visual**
+                     + **x** : *0*
+                     + **y** : *0*
+                     + **symbol** : *X*
+                  + **stats**
+                     + **name** : *NONAME*
+                     + **atk** : *0*
+                     + **def** : *0*
+                     + **spd** : *0*
+                  + **inventory**
+                     + **size** : *5*
+                     + **items** : *[]*
+                        + **weapon**
+                           + **stats**
+                              + **name** : *NONAME*
+                              + **atk** : *0*
+                              + **def** : *0*
+                              + **spd** : *0*
+                           + **desc** : *NODESC*
+                           + **rarity** : *0*
+                           + **value** : *0*
+                        + **armor**
+                           + **stats**
+                              + **name** : *NONAME*
+                              + **atk** : *0*
+                              + **def** : *0*
+                              + **spd** : *0*
+                           + **desc** : *NODESC*
+                           + **rarity** : *0*
+                           + **value** : *0*
+                           + **floor** : *0*
+                        + **consumable**
+                           + **stats**
+                              + **name** : *NONAME*
+                              + **atk** : *0*
+                              + **def** : *0*
+                              + **spd** : *0*
+                           + **desc** : *NODESC*
+                           + **rarity** : *0*
+                           + **value** : *0*
+                           + **duration** : *1*
+                           + **hp** : *0*
+                           + **self** : *false*
+            
+##### World TLO Tree Breakdown
+Elements that require no further explantation are not listed here. Explanations of **gold**, **stats**, **hp**, **maxhp**, **inventory**, **visual** can be found [above](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#player-tlo-tree-breakdown "Player TLO Tree Breakdown").
+
+**gchest**
++ object containing a given amount of gold
++ the **player** can interact with this to take the gold
++ when the gold has been taken, this object deletes itself
+
+**enemy**
++ **dcgold**
+   + value from 0 to 100
+   + the chance (out of 100) that this **enemy** will drop its gold upon death
++ **dcweapon**
+   + value from 0 to 100
+   + the chance (out of 100) that this **enemy** will drop its equipped **weapon** upon death
++ **dcarmor**
+   + value from 0 to 100
+   + the chance (out of 100) that this **enemy** will drop its equipped **armor** upon death
+
+**room**
+   + **doors**
+      + this value determines from which directions the **player** can enter and exit the room
+      + a 4-bit value representing the state of the four doors of the room
+      + 8 (1000) is top door, 4 (0100) is left door, 2 (0010) is bottom door, and 1 (0001) is right door
+      + 15 (1111) is all open and 0 (0000) is all closed
+      + to write in binary, preface with "0b"
+      + for example, to have top and bottom doors open: ```doors: 0b1010```
+   + **text**
+      + **onenter**
+         + text displayed when the **player** enters this room
+         + nothing will display if empty (which is also the default value)
+       + **onexit**
+         + text displayed when the **player** exits this room
+         + nothing will display if empty (which is also the default value)
+   + **objects**
+      + list of **gchest**s and **enemies**
+
+**row**
+   + contains a variable number of **room**s
+**rooms**
+   + contains a variable number of **row**s
