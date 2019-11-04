@@ -1,0 +1,3 @@
+If you don't know what to do in a situation, type "help".
+This will display a list of available commands and their argument lists.
+* denotes a required argument, and - denotes an optional one.

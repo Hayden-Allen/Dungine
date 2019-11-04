@@ -1,0 +1,185 @@
+world{
+	rooms:[
+		row:[
+			room:{
+				objects: [
+					enemy: {
+						visual: {
+							x: 0,
+							y: 0,
+							symbol: #
+						},
+						stats: {
+							name: "Warlock",
+							atk: 2,
+							def: 2,
+							spd: 2
+						},
+						hp: 6,
+						gold: 20,
+						inventory: {
+							size: 2
+							items: [
+								weapon: {
+									stats: {
+										name: "Wand",
+										atk: 3
+									},
+									desc: "A powerful magic item",
+									rarity: 2,
+									value: 10
+								}
+								armor: {
+									stats: {
+										name: "Robe",
+										def: 1
+									}
+									desc: "A warlock robe",
+									rarity: 1,
+									value: 5
+								}
+							]
+						}
+						dcgold: 100,
+						dcweapon: 100,
+						dcarmor: 100
+					},
+					enemy: {
+						visual: {
+							x: 1,
+							y: 0,
+							symbol: #
+						},
+						stats: {
+							name: "Warlock",
+							atk: 2,
+							def: 2,
+							spd: 2
+						},
+						hp: 6,
+						gold: 20,
+						inventory: {
+							size: 2
+							items: [
+								weapon: {
+									stats: {
+										name: "Wand",
+										atk: 3
+									},
+									desc: "A powerful magic item",
+									rarity: 2,
+									value: 10
+								}
+								armor: {
+									stats: {
+										name: "Robe",
+										def: 1
+									}
+									desc: "A warlock robe",
+									rarity: 1,
+									value: 5
+								}
+							]
+						}
+						dcgold: 100,
+						dcweapon: 100,
+						dcarmor: 100
+					},
+					gchest: {
+						visual: {
+							x: 2,
+							y: 0,
+							symbol: C
+						},
+						gold: 100
+					},
+					gchest: {
+						visual: {
+							x: 3,
+							y: 0,
+							symbol: D
+						},
+						gold: 100
+					},
+					
+					gchest: {
+						visual: {
+							x: 0,
+							y: 1,
+							symbol: E
+						},
+						gold: 100
+					},
+					gchest: {
+						visual: {
+							x: 1,
+							y: 1,
+							symbol: F
+						},
+						gold: 100
+					},
+					gchest: {
+						visual: {
+							x: 2,
+							y: 1,
+							symbol: G
+						},
+						gold: 100
+					},
+					gchest: {
+						visual: {
+							x: 3,
+							y: 1,
+							symbol: H
+						},
+						gold: 100
+					}
+				],
+				doors: 0b0011
+			},
+			room: {
+				text: {
+					onenter: "test1"
+				},
+				objects: [
+					gchest: {
+						visual: {
+							x: 3,
+							y: 1,
+							symbol: H
+						},
+						gold: 100
+					}
+				],
+				doors: 0b0111
+			},
+			room: {
+				text: {
+					onenter: "test2"
+				},
+				doors: 0b0111
+			},
+			room: {
+				text: {
+					onenter: "test3"
+				},
+				doors: 0b0100
+			}
+		],
+		row: [
+			room: {
+				doors: 0b1001
+			},
+			room: {
+				text: {
+					onenter: "Gotcha!"
+				},
+				doors: 0b0000
+			},
+			room: {
+				doors: 0b1100
+			}
+		]
+	],
+	name:"World 1"
+}

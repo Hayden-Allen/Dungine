@@ -1,0 +1,67 @@
+player {
+	visual: {
+		x: 1, y: 0,
+		symbol: $
+	},
+	stats: {
+		name: %name,
+		atk: 99,
+		def: 99,
+		spd: 99
+	},
+	hp: 99,
+	gold: 9999,
+	inventory: {
+		size: 8,
+		items: [
+			weapon: {
+				stats: {
+					name: "Golden Rose",
+					atk: 99,
+					spd: 99
+				}
+				desc: "A very powerful sword",
+				rarity: 9,
+				value: 999
+			},
+			armor: {
+				stats: {
+					name: "Chestplate",
+					def: 10
+				}
+				desc: "An iron chestplate",
+				rarity: 1,
+				value: 1
+			},
+			weapon: {
+				stats: {
+					name: "TEST",
+					atk: 1,
+					spd: 1
+				}
+				desc: "Nothing",
+				rarity: 1,
+				value: 1
+			},
+			armor: {
+				stats: {
+					name: "Shield",
+					def: 10,
+					spd: -500
+				},
+				desc: "An iron shield",
+				rarity: 2,
+				value: 20
+			},
+			consumable: {
+				stats: {
+					name: "Health Potion"
+				},
+				hp: 5,
+				desc: "Heals 5 points of health",
+				rarity: 1,
+				value: 10
+			}
+		]
+	}
+}

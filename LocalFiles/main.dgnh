@@ -1,0 +1,10 @@
+param user.name s "TESTING PLAYER NAME"
+
+read "LocalFiles/World 1"
+read "LocalFiles/Player"
+
+param con.setting.echo b false
+param con.setting.stutter i 5
+param con.setting.maponmove b true
+
+param con.graphic.encounter.help.corner c A
