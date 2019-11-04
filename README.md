@@ -372,3 +372,12 @@ Currently, there is no way for you to create subdirectories under **user**, but 
 As discussed [earlier](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#commands "Header File Commands"), manipulation of registry data is done in header files using the **param** command.
 
 The first argument passed to **param** is the path of the value you wish to change. As mentioned above, there are far too many values in **con** for me to list right now, but useful ones include: **setting**.(**echo**/**stutter**/**input**/**output**/**maponmove**) (whether or not to display warning messages during interpretation, millisecond delay between printed characters, String printed before player input, String printed before output, whether or not to draw the map after the player moves) and **graphic**.**room**.**wall**.(**corner**/**ns**/**ew**) (corner and vertical/horizontal wall characters for rooms).
+
+The second argument is a character representing the data type:  
++ **b** for **b**oolean
++ **i** for **i**nteger
++ **s** for **s**tring
++ **c** for **c**har
+
+To make the console draw the map after every movement: ```param con.setting.maponmove b true```
+And to make the corners of all rooms an asterisk: ```param con.graphic.room.wall.corner c *```
