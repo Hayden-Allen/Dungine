@@ -49,7 +49,7 @@ Every Dungine object is made up of 3 distinct types: *attributes*, *lists*, and 
 + *Attributes*
    + the most basic data type, being only a key and a primitive value (int, String, boolean, char)
 + *Lists* 
-   + store a variable amount of a 1 of the 3 data types
+   + store a variable amount of 1 of the 3 data types
    + there are currently no lists in Dungine that store *attributes*
 + *Objects*
    + the most complex data type, storing a set number of all 3 types
