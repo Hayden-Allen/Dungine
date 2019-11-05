@@ -46,27 +46,30 @@ public class ParameterList extends ParameterBase {	//stores a list of Parameters
 			return s.substring(0, s.lastIndexOf(",")) + "]";
 		return s + "]";	//close list
 	}
-	public ParameterList getPath(String path, boolean write) {
+	public ParameterList getPath(String path, boolean write) {	//get element at given path
 		path = path.toUpperCase();
-		return followPath(path, path, write);
+		return followPath(path, path, write);	//recurse
 	}
+	//path relative to this node, full path, whether or not this is a write operation
 	private ParameterList followPath(String path, String fullPath, boolean write) {
-		if(path.isEmpty())
+		if(path.isEmpty())	//end of path reached
 			return this;
 		
-		int end = path.contains(".") ? path.indexOf(".") : path.length();
-		String cur = path.substring(0, end);
-		int fpend = fullPath.lastIndexOf(path) == 0 ? fullPath.length() : fullPath.lastIndexOf(path) - 1;
-		ParameterList pl = this.<ParameterList>getElement(cur);
+		int end = path.contains(".") ? path.indexOf(".") : path.length();	//path of next node
+		String cur = path.substring(0, end);	//name of child node to get
+		ParameterList pl = this.<ParameterList>getElement(cur);	//get next node in path
+
+		//for debug printing
+		int fpend = fullPath.lastIndexOf(path) == 0 ? fullPath.length() : fullPath.lastIndexOf(path) - 1;	//end of full path
+		String fp = fullPath.substring(0, fpend);	//adjusted path
 		
-		String fp = fullPath.substring(0, fpend);
-		
-		if(pl == null)
+		if(pl == null)	//child doesn't exist
 			throw new Error(String.format("Parameter %s has no element %s", fp, cur));
-		if(write && pl.readOnly()) {
+		if(write && pl.readOnly()) {	//restricted access
 			System.out.printf("WARNING: Cannot edit %s; it is read only\n", fullPath);
 			return null;
 		}
+		//follow path from child node
 		return pl.followPath(end + 1 > path.length() ? "" : path.substring(end + 1), fullPath, write);
 	}
 }
