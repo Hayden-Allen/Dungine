@@ -98,12 +98,12 @@ Let's do a line-by-line of this **player** definition:
 + ```}```
    + close **visual** object
 + ```stats {```
-   + opens a **stat** object, which stores generic information and is used in many different kinds of objects
+   + opens a **stats** object, which stores generic information and is used in many different kinds of objects
 + ```name: "Player 1", atk: 5, def: 5, spd: 5```
    + this **player**'s name is "Player 1". Note the use of quotations to delimit the String and the ability to include whitespace
    + this **player** has base attack, defense, and speed stats of 5. We'll talk about what these mean in detail [later](https://github.com/Hayden-Allen/Dungine/blob/master/README.md#player-tlo-tree-breakdown "Player TLO Tree Breakdown")
 + ```}```
-   + close **stat** object
+   + close **stats** object
 + ```hp: 5, gold: 100```
    + this **player** has a base health of 5 and starts with 100 gold pieces
    + the name of the currency in-game can be customized through the registry, but you can't change the name of the Dungine attribute
